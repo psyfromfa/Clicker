@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cyclops Button</title>
+    <meta
+      name="description"
+      content="Cyclops Button is a character clicker and autobattler prototype with Eggs, loot crates, training, tournaments, durability, and a simulated market economy."
+    />
+    <link rel="stylesheet" href="styles.css?v=20260605k" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#home" data-route-link="home" aria-label="Cyclops Button home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>
+          <strong>Cyclops Button</strong>
+          <small>Playable economy</small>
+        </span>
+      </a>
+
+      <button class="nav-toggle" type="button" id="navToggle" aria-controls="topNav" aria-expanded="false">
+        Menu
+      </button>
+
+      <nav class="topnav" id="topNav" aria-label="Primary navigation">
+        <a href="#home" data-route-link="home">Home</a>
+        <a href="#play" data-route-link="play">Play</a>
+        <a href="#characters" data-route-link="characters">Characters</a>
+        <a href="#training" data-route-link="training">Training</a>
+        <a href="#arena" data-route-link="arena">Arena</a>
+        <a href="#loot" data-route-link="loot">Loot</a>
+        <a href="#shop" data-route-link="shop">Shop</a>
+        <a href="#market" data-route-link="market">Market</a>
+        <a href="#quests" data-route-link="quests">Quests</a>
+        <a href="#leaderboard" data-route-link="leaderboard">Leaderboard</a>
+        <a href="#docs" data-route-link="docs">Docs</a>
+        <a href="#profile" data-route-link="profile">Profile</a>
+      </nav>
+
+      <button class="theme-button" type="button" id="themeToggle" aria-label="Toggle light and dark theme">
+        <span aria-hidden="true">Theme</span>
+      </button>
+    </header>
+
+    <main>
+      <section class="view is-active" id="home" data-view="home">
+        <div class="notice-strip">
+          <span>Alpha economy</span>
+          <strong>Designing toward audited contracts, transparent operator identity, and a durable player market.</strong>
+        </div>
+
+        <div class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow">Character clicker autobattler</p>
+            <h1>Cyclops Button</h1>
+            <p class="lede">
+              Hatch a starter Egg, mint a random Character, equip loot, train through Duels, and use your active
+              Character to power every visor-button press. Fight 11 is the tournament: one survives, earns the Mark,
+              and changes your account history.
+            </p>
+            <div class="hero-actions">
+              <a class="button primary" href="#characters" data-route-link="characters">Hatch starter Egg</a>
+              <a class="button secondary" href="#play" data-route-link="play">Press the button</a>
+            </div>
+            <div class="quick-play" aria-label="Quick local button press">
+              <button class="mini-visor-button" id="quickPress" type="button" aria-label="Quick press">
+                <span class="mini-visor" aria-hidden="true"></span>
+              </button>
+              <div>
+                <span>Local run</span>
+                <strong id="quickBalance">0 shards</strong>
+                <small id="quickEnergy">Energy 0 / 0</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-art-wrap">
+            <img
+              class="hero-art"
+              src="assets/cyclops-card-bay.png"
+              alt="Cyclops arcade card bay with a glowing green portal"
+            />
+          </div>
+        </div>
+
+        <div class="section-head">
+          <p class="eyebrow">Core loops</p>
+          <h2>What players do</h2>
+        </div>
+        <div class="breakdown-grid">
+          <article>
+            <span>01</span>
+            <h3>Character core</h3>
+            <p>Eggs mint random Characters with loadout, race, class, rarity, traits, stats, and lifecycle state.</p>
+          </article>
+          <article>
+            <span>02</span>
+            <h3>Clicker loop</h3>
+            <p>Your selected Character determines energy, regen, shard extraction, lucky signals, and button style.</p>
+          </article>
+          <article>
+            <span>03</span>
+            <h3>Loot loop</h3>
+            <p>Loot crates roll items with fixed primary stats, combat side rolls, durability, repair, and scrap value.</p>
+          </article>
+          <article>
+            <span>04</span>
+            <h3>Mark loop</h3>
+            <p>Fight 11 sends the active Character into a multi-round tournament. The winner survives and earns the Mark.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="view" id="play" data-view="play">
+        <div class="section-head">
+          <p class="eyebrow">Playable alpha</p>
+          <h2>Button loop</h2>
+          <p>The current build models economy behavior locally before production wallet and contract integration.</p>
+        </div>
+
+        <div class="stats-rail" id="statsRail"></div>
+
+        <div class="play-layout">
+          <section class="button-station" aria-labelledby="buttonStationTitle">
+            <div>
+              <p class="eyebrow">Press</p>
+              <h3 id="buttonStationTitle">Extract shards</h3>
+            </div>
+            <button class="visor-button" id="pressButton" type="button" aria-label="Press Cyclops Button">
+              <span class="visor-shape" aria-hidden="true"></span>
+              <strong>Press</strong>
+            </button>
+            <div class="stage-meta" id="playStageMeta"></div>
+            <div class="energy-meter" aria-label="Energy">
+              <span id="energyBar"></span>
+            </div>
+            <div class="station-meta">
+              <span id="energyLabel">Energy: 0 / 0</span>
+              <span id="rewardLabel">0.00 per press</span>
+            </div>
+            <p class="microcopy" id="lastPressNote">Pressing costs 1 energy, earns shards, and slowly wears equipped loot.</p>
+          </section>
+
+          <section class="control-panel" aria-labelledby="buildTitle">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Active</p>
+                <h3 id="buildTitle">Selected Character</h3>
+              </div>
+              <div class="panel-actions">
+                <button class="button compact" type="button" id="openCharacterGuide">Guide</button>
+                <button class="button compact" type="button" id="resetRun">Reset run</button>
+              </div>
+            </div>
+            <div id="activeCharacterPanel"></div>
+            <div class="build-summary" id="buildSummary"></div>
+          </section>
+        </div>
+
+        <div class="section-head small">
+          <p class="eyebrow">Systems</p>
+          <h2>Live local economy</h2>
+        </div>
+        <div class="system-grid" id="systemGrid"></div>
+      </section>
+
+      <section class="view" id="characters" data-view="characters">
+        <div class="section-head">
+          <p class="eyebrow">Roster</p>
+          <h2>Characters</h2>
+          <p>
+            Characters hatch from Eggs. Each one has a loadout, race, class, rarity, traits, stats,
+            training points, battle history, and a lifecycle state.
+          </p>
+        </div>
+
+        <div class="character-layout hatch-layout">
+          <section class="shop-panel" aria-labelledby="eggMintTitle">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Hatch</p>
+                <h3 id="eggMintTitle">Character Eggs</h3>
+              </div>
+              <span class="pill" id="characterEggPill">0 Eggs</span>
+            </div>
+            <p class="body-copy">
+              The first Egg is free. Extra Eggs hatch more Characters into your roster so you can switch play styles.
+            </p>
+            <div class="button-stack">
+              <button class="button primary full" type="button" id="openCharacterEgg">Hatch Character Egg</button>
+              <button class="button secondary full" type="button" id="buyCharacterEgg">Buy Egg - 750 shards</button>
+              <button class="button full" type="button" id="rerollActive">Reroll active - destroys it</button>
+            </div>
+            <div class="crate-result" id="characterEggResult">Hatch your starter Egg to mint the first Character.</div>
+          </section>
+        </div>
+
+        <div class="section-head small">
+          <p class="eyebrow">Collection</p>
+          <h2>Your roster</h2>
+        </div>
+        <div class="character-grid" id="characterGrid"></div>
+      </section>
+
+      <section class="view" id="training" data-view="training">
+        <div class="section-head">
+          <p class="eyebrow">Training</p>
+          <h2>Training room</h2>
+          <p>
+            Spend Duel-earned TP to improve the active Character. Each station explains exactly what the stat changes
+            for clicking and combat.
+          </p>
+        </div>
+
+        <div class="training-layout">
+          <section class="shop-panel" aria-labelledby="trainingTitle">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Active trainee</p>
+                <h3 id="trainingTitle">Selected Character</h3>
+              </div>
+              <span class="pill" id="trainingPointPill">0 TP</span>
+            </div>
+            <div id="trainingCharacterPanel"></div>
+          </section>
+
+          <section class="shop-panel" aria-labelledby="trainingStationsTitle">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Stations</p>
+                <h3 id="trainingStationsTitle">Stat rooms</h3>
+              </div>
+              <span class="pill">1 TP each</span>
+            </div>
+            <p class="body-copy">
+              Light training is safe. Moderate and intense training can fail and consume TP.
+            </p>
+            <div class="training-grid" id="trainingPanel"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" id="arena" data-view="arena">
+        <div class="section-head">
+          <p class="eyebrow">Autobattler</p>
+          <h2>Arena</h2>
+          <p>
+            Fight Duels to earn training points. Your 11th fight becomes the tournament: 8 enter, one survives,
+            and the winner earns the account-bound Mark.
+          </p>
+        </div>
+
+        <div class="arena-layout">
+          <section class="shop-panel" aria-labelledby="arenaTitle">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Battle</p>
+                <h3 id="arenaTitle">Match control</h3>
+              </div>
+              <span class="pill" id="fightCounterPill">0 / 11</span>
+            </div>
+            <div id="battlePrep"></div>
+            <div class="button-stack">
+              <button class="button primary full" type="button" id="duelButton">Fight next battle</button>
+              <button class="button secondary full" type="button" id="practiceButton">AI practice</button>
+            </div>
+          </section>
+
+          <section class="shop-panel" aria-labelledby="markTitle">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Mark</p>
+                <h3 id="markTitle">Tournament record</h3>
+              </div>
+              <span class="pill" id="markPill">No Mark</span>
+            </div>
+            <div id="markPanel"></div>
+          </section>
+
+          <section class="battle-stage-wrap" aria-labelledby="battleStageTitle">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Action event</p>
+                <h3 id="battleStageTitle">Battle stage</h3>
+              </div>
+              <span class="pill" id="battleRoundPill">Idle</span>
+            </div>
+            <div id="battleStage"></div>
+          </section>
+        </div>
+
+        <div class="section-head small">
+          <p class="eyebrow">Combat feed</p>
+          <h2>Battle log</h2>
+        </div>
+        <div class="battle-log" id="battleLog"></div>
+      </section>
+
+      <section class="view" id="docs" data-view="docs">
+        <div class="section-head">
+          <p class="eyebrow">Cyclops codex</p>
+          <h2>Design docs</h2>
+          <p>Live design notes for Characters, loot, training, tournaments, marketplace behavior, and economy sinks.</p>
+        </div>
+
+        <div class="docs-layout">
+          <aside class="docs-index" aria-label="Docs chapters">
+            <label class="search-label">
+              Search chapters
+              <input id="docSearch" type="search" placeholder="Tokenomics, classes, API..." />
+            </label>
+            <div class="chapter-links" id="chapterLinks"></div>
+          </aside>
+          <div class="docs-content" id="docsContent"></div>
+        </div>
+      </section>
+
+      <section class="view" id="leaderboard" data-view="leaderboard">
+        <div class="section-head">
+          <p class="eyebrow">Server-verified shape</p>
+          <h2>Leaderboard recreation</h2>
+          <p>Mock public rows plus your local run, sorted by total shards extracted.</p>
+        </div>
+        <div class="leaderboard-wrap">
+          <div class="podium" id="podium"></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Player</th>
+                  <th>Loadout</th>
+                  <th>Class</th>
+                  <th>Total shards</th>
+                  <th>Steal</th>
+                </tr>
+              </thead>
+              <tbody id="leaderboardBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="quests" data-view="quests">
+        <div class="section-head">
+          <p class="eyebrow">Progression</p>
+          <h2>Quest board</h2>
+          <p>Milestones teach the economy loops and reward active play with shards.</p>
+        </div>
+        <div class="quest-grid" id="questGrid"></div>
+      </section>
+
+      <section class="view" id="shop" data-view="shop">
+        <div class="section-head">
+          <p class="eyebrow">Spend and burn</p>
+          <h2>Shop, bay, and crates</h2>
+          <p>Buy account upgrades, charge the bay, hatch Eggs, and open loot crates. Item management lives in Loot.</p>
+        </div>
+
+        <div class="shop-layout">
+          <section class="shop-panel" aria-labelledby="upgradeTitle">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Shop</p>
+                <h3 id="upgradeTitle">Stat upgrades</h3>
+              </div>
+              <span class="pill" id="burnedPill">0 burned</span>
+            </div>
+            <div class="upgrade-list" id="upgradeList"></div>
+          </section>
+
+          <section class="shop-panel" aria-labelledby="farmTitle">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Bay</p>
+                <h3 id="farmTitle">Offline yield</h3>
+              </div>
+              <span class="pill" id="farmPill">Level 0</span>
+            </div>
+            <p class="body-copy">
+              The bay adds shards every second and caps offline-style accrual at an eight-hour window.
+            </p>
+            <button class="button primary full" type="button" id="buyFarm">Buy bay level</button>
+          </section>
+
+          <section class="shop-panel" aria-labelledby="crateTitle">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Gacha</p>
+                <h3 id="crateTitle">Loot crate</h3>
+              </div>
+              <span class="pill" id="lootCratePrice">300 shards</span>
+            </div>
+            <p class="body-copy">Roll one loot item with a fixed category primary stat, combat side rolls, rarity, and durability.</p>
+            <button class="button primary full" type="button" id="openCrate">Open crate</button>
+            <div class="crate-result" id="crateResult">No crate opened yet.</div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" id="loot" data-view="loot">
+        <div class="section-head">
+          <p class="eyebrow">Inventory</p>
+          <h2>Loot inventory</h2>
+          <p>
+            Equip one item to the active Character, repair damaged loot, scrap bad rolls, or list items on the market.
+          </p>
+        </div>
+
+        <div class="stats-rail" id="lootStats"></div>
+        <div class="inventory-grid" id="inventoryGrid"></div>
+      </section>
+
+      <section class="view" id="market" data-view="market">
+        <div class="section-head">
+          <p class="eyebrow">Marketplace</p>
+          <h2>Shard and ETH market simulation</h2>
+          <p>Buy loot from simulated sellers, list your own items for shards or ETH, and settle marketplace demand.</p>
+        </div>
+
+        <div class="stats-rail" id="marketStats"></div>
+
+        <div class="market-actions">
+          <button class="button primary" type="button" id="settleMarket">Settle buyer demand</button>
+          <p class="body-copy">A market tick gives each of your listings a 65% chance to sell after a 5% marketplace fee.</p>
+        </div>
+
+        <div class="section-head small">
+          <p class="eyebrow">Listings</p>
+          <h2>Buy loot</h2>
+        </div>
+        <div class="inventory-grid" id="marketGrid"></div>
+
+        <div class="section-head small">
+          <p class="eyebrow">Your sales</p>
+          <h2>Listed inventory</h2>
+        </div>
+        <div class="inventory-grid" id="playerListings"></div>
+      </section>
+
+      <section class="view" id="profile" data-view="profile">
+        <div class="section-head">
+          <p class="eyebrow">Account</p>
+          <h2>Profile, referrals, wallet, and chat</h2>
+          <p>Account-facing surfaces for player stats, referral codes, claim modeling, and community notes.</p>
+        </div>
+
+        <div class="profile-layout">
+          <section class="profile-panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">My profile</p>
+                <h3>Player account</h3>
+              </div>
+              <span class="status-dot">Alpha</span>
+            </div>
+            <dl class="profile-stats" id="profileStats"></dl>
+          </section>
+
+          <section class="profile-panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Referrals</p>
+              <h3>Invite code</h3>
+              </div>
+              <button class="button compact" type="button" id="copyReferral">Copy</button>
+            </div>
+            <div class="referral-code" id="referralCode"></div>
+            <p class="body-copy">
+              Referral codes can become a growth sink/source in production: rewards, invite quests, and market fee rebates.
+            </p>
+          </section>
+
+          <section class="profile-panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Wallet</p>
+                <h3>Claim model</h3>
+              </div>
+              <span class="pill">Audit gated</span>
+            </div>
+            <p class="body-copy" id="claimCopy"></p>
+            <button class="button secondary full" type="button" disabled>Wallet actions pending audit</button>
+          </section>
+
+          <section class="profile-panel chat-panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Global chat</p>
+                <h3>Local notes</h3>
+              </div>
+              <span class="pill">Browser only</span>
+            </div>
+            <div class="chat-log" id="chatLog"></div>
+            <form class="chat-form" id="chatForm">
+              <input id="chatInput" maxlength="120" placeholder="Leave a community note..." />
+              <button class="button compact primary" type="submit">Send</button>
+            </form>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>
+        Cyclops Button alpha models the game economy before production deployment. Wallet and contract actions should
+        ship only after audit review, finalized terms, and public operator disclosures.
+      </p>
+    </footer>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <section class="modal-root hidden" id="modalRoot" aria-modal="true" role="dialog"></section>
+    <script src="app.js?v=20260605k"></script>
+  </body>
+</html>
