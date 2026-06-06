@@ -8,7 +8,7 @@
       name="description"
       content="Cyclops Button is a character clicker and autobattler prototype with Eggs, loot crates, training, tournaments, durability, and a simulated market economy."
     />
-    <link rel="stylesheet" href="styles.css?v=20260605k" />
+    <link rel="stylesheet" href="styles.css?v=20260606h" />
   </head>
   <body>
     <header class="topbar">
@@ -28,7 +28,7 @@
         <a href="#home" data-route-link="home">Home</a>
         <a href="#play" data-route-link="play">Play</a>
         <a href="#characters" data-route-link="characters">Characters</a>
-        <a href="#training" data-route-link="training">Training</a>
+        <a href="#training" data-route-link="training">Stats &amp; Training</a>
         <a href="#arena" data-route-link="arena">Arena</a>
         <a href="#loot" data-route-link="loot">Loot</a>
         <a href="#shop" data-route-link="shop">Shop</a>
@@ -93,7 +93,7 @@
           <article>
             <span>01</span>
             <h3>Character core</h3>
-            <p>Eggs mint random Characters with loadout, race, class, rarity, traits, stats, and lifecycle state.</p>
+            <p>Eggs mint random Characters with race, class, rarity, traits, stats, and lifecycle state.</p>
           </article>
           <article>
             <span>02</span>
@@ -150,7 +150,7 @@
                 <h3 id="buildTitle">Selected Character</h3>
               </div>
               <div class="panel-actions">
-                <button class="button compact" type="button" id="openCharacterGuide">Guide</button>
+                <button class="button compact" type="button" id="openCharacterGuide">Stats guide</button>
                 <button class="button compact" type="button" id="resetRun">Reset run</button>
               </div>
             </div>
@@ -171,7 +171,7 @@
           <p class="eyebrow">Roster</p>
           <h2>Characters</h2>
           <p>
-            Characters hatch from Eggs. Each one has a loadout, race, class, rarity, traits, stats,
+            Characters hatch from Eggs. Each one has a race, class, rarity, traits, stats,
             training points, battle history, and a lifecycle state.
           </p>
         </div>
@@ -206,13 +206,15 @@
 
       <section class="view" id="training" data-view="training">
         <div class="section-head">
-          <p class="eyebrow">Training</p>
-          <h2>Training room</h2>
+          <p class="eyebrow">Stats guide</p>
+          <h2>Stats &amp; Training</h2>
           <p>
-            Spend Duel-earned TP to improve the active Character. Each station explains exactly what the stat changes
-            for clicking and combat.
+            Start with the plain-language guide below, then spend Duel-earned TP on the stat that matches the build
+            you want.
           </p>
         </div>
+
+        <div id="statPrimer"></div>
 
         <div class="training-layout">
           <section class="shop-panel" aria-labelledby="trainingTitle">
@@ -235,7 +237,8 @@
               <span class="pill">1 TP each</span>
             </div>
             <p class="body-copy">
-              Light training is safe. Moderate and intense training can fail and consume TP.
+              Light is guaranteed and has the best average return. Moderate and Intense trade efficiency for a chance
+              at a larger one-attempt gain.
             </p>
             <div class="training-grid" id="trainingPanel"></div>
           </section>
@@ -331,7 +334,7 @@
                 <tr>
                   <th>Rank</th>
                   <th>Player</th>
-                  <th>Loadout</th>
+                  <th>Race</th>
                   <th>Class</th>
                   <th>Total shards</th>
                   <th>Steal</th>
@@ -512,6 +515,6 @@
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <section class="modal-root hidden" id="modalRoot" aria-modal="true" role="dialog"></section>
-    <script src="app.js?v=20260605k"></script>
+    <script src="app.js?v=20260606h"></script>
   </body>
 </html>
