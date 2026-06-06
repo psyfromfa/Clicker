@@ -3,16 +3,19 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <title>Cyclops Button</title>
     <meta
       name="description"
       content="Cyclops Button is a character clicker and autobattler prototype with Eggs, loot crates, training, tournaments, durability, and a simulated market economy."
     />
-    <link rel="stylesheet" href="styles.css?v=20260606j" />
+    <link rel="stylesheet" href="styles.css?v=20260606t" />
   </head>
   <body>
-    <header class="topbar">
-      <a class="brand" href="#home" data-route-link="home" aria-label="Cyclops Button home">
+    <header class="topbar game-header">
+      <a class="brand" href="#play" data-route-link="play" aria-label="Cyclops Button play screen">
         <span class="brand-mark" aria-hidden="true"></span>
         <span>
           <strong>Cyclops Button</strong>
@@ -25,24 +28,28 @@
       </button>
 
       <nav class="topnav" id="topNav" aria-label="Primary navigation">
-        <a href="#home" data-route-link="home">Home</a>
         <a href="#play" data-route-link="play">Play</a>
         <a href="#characters" data-route-link="characters">Characters</a>
-        <a href="#training" data-route-link="training">Stats &amp; Training</a>
         <a href="#arena" data-route-link="arena">Arena</a>
+        <a href="#training" data-route-link="training">Training Room</a>
         <a href="#loot" data-route-link="loot">Loot</a>
-        <a href="#shop" data-route-link="shop">Shop</a>
-        <a href="#market" data-route-link="market">Market</a>
-        <a href="#quests" data-route-link="quests">Quests</a>
-        <a href="#leaderboard" data-route-link="leaderboard">Leaderboard</a>
-        <a href="#docs" data-route-link="docs">Docs</a>
-        <a href="#profile" data-route-link="profile">Profile</a>
-        <button class="dev-button" type="button" id="devAddShards" aria-label="Add 1,000 test shards">Dev +1000</button>
+        <button class="more-button" type="button" id="moreToggle" aria-controls="moreNav" aria-expanded="false">More</button>
+        <div class="more-nav" id="moreNav">
+          <a href="#shop" data-route-link="shop">Shop</a>
+          <a href="#market" data-route-link="market">Market</a>
+          <a href="#quests" data-route-link="quests">Quests</a>
+          <a href="#leaderboard" data-route-link="leaderboard">Leaderboard</a>
+          <a href="#docs" data-route-link="docs">Docs</a>
+          <a href="#profile" data-route-link="profile">Profile</a>
+          <a href="#home" data-route-link="home">About</a>
+          <button class="dev-button" type="button" id="devAddShards" aria-label="Add 1,000 test shards">Dev +1000</button>
+        </div>
       </nav>
 
-      <button class="theme-button" type="button" id="themeToggle" aria-label="Toggle light and dark theme">
-        <span aria-hidden="true">Theme</span>
-      </button>
+      <div class="header-tools">
+        <button class="sound-button" type="button" id="soundToggle" aria-label="Toggle game sound" aria-pressed="true">Sound</button>
+        <button class="theme-button" type="button" id="themeToggle" aria-label="Toggle light and dark theme">Theme</button>
+      </div>
     </header>
 
     <main>
@@ -94,7 +101,7 @@
           <article>
             <span>01</span>
             <h3>Character core</h3>
-            <p>Eggs mint random Characters with race, class, rarity, traits, stats, and lifecycle state.</p>
+            <p>Eggs mint random Characters with race, class, rarity, combat stats, and battle history.</p>
           </article>
           <article>
             <span>02</span>
@@ -115,56 +122,95 @@
       </section>
 
       <section class="view" id="play" data-view="play">
-        <div class="section-head">
-          <p class="eyebrow">Playable alpha</p>
-          <h2>Button loop</h2>
-          <p>The current build models economy behavior locally before production wallet and contract integration.</p>
-        </div>
+        <div class="play-console">
+          <div class="stats-rail play-hud" id="statsRail"></div>
 
-        <div class="stats-rail" id="statsRail"></div>
+          <section class="bay-stage" aria-labelledby="buttonStationTitle">
+            <div class="bay-ambient" aria-hidden="true"></div>
 
-        <div class="play-layout">
-          <section class="button-station" aria-labelledby="buttonStationTitle">
-            <div>
-              <p class="eyebrow">Press</p>
-              <h3 id="buttonStationTitle">Extract shards</h3>
+            <div class="active-character-stage">
+              <div class="stage-character-art" id="stageCharacterSprite"></div>
+              <div class="stage-character-panel" id="activeCharacterPanel"></div>
             </div>
-            <button class="visor-button" id="pressButton" type="button" aria-label="Press Cyclops Button">
-              <span class="visor-shape" aria-hidden="true"></span>
-              <strong>Press</strong>
-            </button>
-            <div class="stage-meta" id="playStageMeta"></div>
-            <div class="energy-meter" aria-label="Energy">
-              <span id="energyBar"></span>
+
+            <div class="button-core">
+              <p class="eyebrow">Extraction station</p>
+              <h2 id="buttonStationTitle">Cyclops Button</h2>
+              <button class="visor-button" id="pressButton" type="button" aria-label="Press Cyclops Button">
+                <span class="bay-ring bay-ring-outer" aria-hidden="true"></span>
+                <span class="bay-ring bay-ring-inner" aria-hidden="true"></span>
+                <span class="visor-shape" aria-hidden="true"></span>
+                <strong>Press</strong>
+              </button>
+              <div class="energy-meter" aria-label="Energy">
+                <span id="energyBar"></span>
+              </div>
+              <div class="station-meta">
+                <span id="energyLabel">Energy: 0 / 0</span>
+                <span id="rewardLabel">0.00 shards / press</span>
+              </div>
+              <p class="microcopy extraction-feed" id="lastPressNote">Pressing costs 1 Energy and slowly wears equipped loot.</p>
+              <div class="press-effects" id="pressEffects" aria-hidden="true"></div>
             </div>
-            <div class="station-meta">
-              <span id="energyLabel">Energy: 0 / 0</span>
-              <span id="rewardLabel">0.00 per press</span>
+
+            <aside class="stage-status" aria-label="Character status">
+              <div class="fight-progress" id="mainFightProgress"></div>
+              <div class="equipped-stage-loot" id="mainEquippedLoot"></div>
+            </aside>
+
+            <nav class="stage-actions" aria-label="Game actions">
+              <a href="#arena" data-route-link="arena">
+                <img src="assets/action-icons/battle.png" alt="" />
+                <span>Battle</span>
+              </a>
+              <a href="#training" data-route-link="training">
+                <img src="assets/action-icons/train.png" alt="" />
+                <span>Train</span>
+              </a>
+              <a href="#loot" data-route-link="loot">
+                <img src="assets/action-icons/loot.png" alt="" />
+                <span>Loot</span>
+              </a>
+              <a href="#market" data-route-link="market">
+                <img src="assets/action-icons/market.png" alt="" />
+                <span>Market</span>
+              </a>
+            </nav>
+
+            <div class="bay-console">
+              <div>
+                <span>Bay</span>
+                <strong id="bayLevelMain">Level 0</strong>
+              </div>
+              <div>
+                <span>Passive yield</span>
+                <strong id="bayYieldMain">0 shards/sec</strong>
+              </div>
+              <button class="button primary" type="button" id="buyFarmMain">Upgrade Bay</button>
             </div>
-            <p class="microcopy" id="lastPressNote">Pressing costs 1 energy, earns shards, and slowly wears equipped loot.</p>
           </section>
 
-          <section class="control-panel" aria-labelledby="buildTitle">
-            <div class="panel-head">
+          <section class="roster-console" aria-labelledby="rosterConsoleTitle">
+            <div class="roster-console-head">
               <div>
-                <p class="eyebrow">Active</p>
-                <h3 id="buildTitle">Selected Character</h3>
+                <p class="eyebrow">Active roster</p>
+                <h3 id="rosterConsoleTitle">Switch Character</h3>
               </div>
               <div class="panel-actions">
                 <button class="button compact" type="button" id="openCharacterGuide">Stats guide</button>
-                <button class="button compact" type="button" id="resetRun">Reset run</button>
+                <button class="button compact danger" type="button" id="resetRun">Reset run</button>
               </div>
             </div>
-            <div id="activeCharacterPanel"></div>
-            <div class="build-summary" id="buildSummary"></div>
+            <div class="play-roster" id="playRoster"></div>
           </section>
-        </div>
 
-        <div class="section-head small">
-          <p class="eyebrow">Systems</p>
-          <h2>Live local economy</h2>
+          <details class="build-detail">
+            <summary>Active Character formulas</summary>
+            <div class="build-summary" id="buildSummary"></div>
+          </details>
+          <div class="stage-meta hidden-meta" id="playStageMeta"></div>
+          <div class="system-grid hidden-systems" id="systemGrid"></div>
         </div>
-        <div class="system-grid" id="systemGrid"></div>
       </section>
 
       <section class="view" id="characters" data-view="characters">
@@ -172,8 +218,8 @@
           <p class="eyebrow">Roster</p>
           <h2>Characters</h2>
           <p>
-            Characters hatch from Eggs. Each one has a race, class, rarity, traits, stats,
-            training points, battle history, and a lifecycle state.
+            Characters hatch from Eggs. Each one has a race, class, rarity, combat stats,
+            training points, battle history, and equipped loot.
           </p>
         </div>
 
@@ -289,7 +335,7 @@
                 <p class="eyebrow">Action event</p>
                 <h3 id="battleStageTitle">Battle stage</h3>
               </div>
-              <span class="pill" id="battleRoundPill">Idle</span>
+              <span class="pill" id="battleRoundPill">No battle</span>
             </div>
             <div id="battleStage"></div>
           </section>
@@ -516,6 +562,6 @@
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <section class="modal-root hidden" id="modalRoot" aria-modal="true" role="dialog"></section>
-    <script src="app.js?v=20260606j"></script>
+    <script src="app.js?v=20260606t"></script>
   </body>
 </html>

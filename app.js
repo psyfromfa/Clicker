@@ -1,11 +1,12 @@
-const storageKey = "cyclops-button-community-state-v3";
-const legacyStorageKey = "cyclops-button-community-state-v2";
+const storageKey = "cyclops-button-community-state-v4";
+const legacyStorageKeys = ["cyclops-button-community-state-v3", "cyclops-button-community-state-v2"];
 
 const characterEggCost = 750;
 const rerollCost = 200;
 const lootCrateCost = 300;
 const marketFee = 0.05;
 const shardsPerEth = 12000;
+const lootAssetRoot = "assets/item-concepts-cyclops/individual";
 
 const raceSprites = {
   normal: "assets/NormalForward.png",
@@ -15,145 +16,93 @@ const raceSprites = {
   metal: "assets/MetalForward.png",
 };
 
-const loadouts = [
-  {
-    id: "rookie-visor",
-    name: "Rookie Visor",
-    access: "Starter",
-    energy: 500,
-    regen: 20.83,
-    steal: 0.2,
-    description:
-      "The safe starter rig. It holds 500 energy, regenerates 20.83 energy per hour, refills in about 24 hours, and starts at 0.20 base extraction before class, stats, loot, and upgrades.",
-  },
-  {
-    id: "neon-courier",
-    name: "Neon Courier",
-    access: "Crate",
-    energy: 1000,
-    regen: 41.67,
-    steal: 1.0,
-    description:
-      "The balanced runner. It holds 1,000 energy, regenerates 41.67 energy per hour, refills in about 24 hours, and starts at 1.00 base extraction for a clean all-day profile.",
-  },
-  {
-    id: "cargo-bruiser",
-    name: "Cargo Bruiser",
-    access: "Crate",
-    energy: 1500,
-    regen: 33.33,
-    steal: 0.75,
-    description:
-      "The deep-session tank. It holds 1,500 energy, regenerates 33.33 energy per hour, refills in about 45 hours, and starts at 0.75 base extraction for longer but slower sessions.",
-  },
-  {
-    id: "arcade-racketeer",
-    name: "Arcade Racketeer",
-    access: "Crate",
-    energy: 500,
-    regen: 20.83,
-    steal: 1.8,
-    description:
-      "The burst raider. It holds 500 energy, regenerates 20.83 energy per hour, refills in about 24 hours, and starts at 1.80 base extraction for short high-impact bursts.",
-  },
-  {
-    id: "glitch-runner",
-    name: "Glitch Runner",
-    access: "Crate",
-    energy: 600,
-    regen: 58.33,
-    steal: 1.0,
-    description:
-      "The frequent-check-in build. It holds 600 energy, regenerates 58.33 energy per hour, refills in about 10.3 hours, and starts at 1.00 base extraction for multiple daily loops.",
-  },
-  {
-    id: "patch-prophet",
-    name: "Patch Prophet",
-    access: "Rare crate",
-    energy: 880,
-    regen: 36.67,
-    steal: 1.25,
-    description:
-      "The efficient quest-style all-rounder. It holds 880 energy, regenerates 36.67 energy per hour, refills in about 24 hours, and starts at 1.25 base extraction without demanding constant check-ins.",
-  },
-  {
-    id: "wrong-warp-pilot",
-    name: "Wrong-Warp Pilot",
-    access: "Rare crate",
-    energy: 800,
-    regen: 33.33,
-    steal: 1.5,
-    description:
-      "The aggressive specialist. It holds 800 energy, regenerates 33.33 energy per hour, refills in about 24 hours, and starts at 1.50 base extraction for offense-focused builds.",
-  },
-];
-
 const classes = [
   {
     id: "mage",
     name: "Mage",
-    bonus: "+15% regen, +2 Power",
-    regen: 1.15,
-    steal: 1,
-    energy: 1,
-    luck: 1,
+    bonus: "+2 Arcana",
+    style: "Sorcery",
     statMods: { health: 0, violence: 0, power: 2, harmony: 0 },
-    description: "Channels Power into faster recovery and spell-heavy battle turns.",
+    description: "Leans toward magical burst damage and breaking through Spirit-based defense.",
   },
   {
     id: "warrior",
     name: "Warrior",
-    bonus: "+15% steal, +2 Violence",
-    regen: 1,
-    steal: 1.15,
-    energy: 1,
-    luck: 1,
+    bonus: "+2 Might",
+    style: "Bloodlust",
     statMods: { health: 0, violence: 2, power: 0, harmony: 0 },
-    description: "Hits harder in Duels and extracts more shards through direct pressure.",
+    description: "Leans toward direct physical pressure and the strongest Might scaling.",
   },
   {
     id: "knight",
     name: "Knight",
-    bonus: "+15% max energy, +20 HP",
-    regen: 1,
-    steal: 1,
-    energy: 1.15,
-    luck: 1,
+    bonus: "+20 Health",
+    style: "Fortify",
     statMods: { health: 20, violence: 0, power: 0, harmony: 0 },
-    description: "Protects a larger energy pool and survives longer in tournament brackets.",
+    description: "Leans toward survival, defensive attacks, and repeated self-healing.",
   },
   {
     id: "shaman",
     name: "Shaman",
-    bonus: "1.4x lucky signals, +2 Harmony",
-    regen: 1,
-    steal: 1,
-    energy: 1,
-    luck: 1.4,
+    bonus: "+2 Spirit",
+    style: "Attune",
     statMods: { health: 0, violence: 0, power: 0, harmony: 2 },
-    description: "Reads omens, improves lucky signal odds, and favors sustain-heavy battle turns.",
+    description: "Leans toward acting early, healing, energy recovery, and Spirit defense.",
   },
   {
     id: "rogue",
     name: "Rogue",
-    bonus: "+10% steal, 1.18x lucky signals, +1 Violence",
-    regen: 1,
-    steal: 1.1,
-    energy: 1,
-    luck: 1.18,
+    bonus: "+1 Might, +1 Spirit",
+    style: "Bloodlust or Attune",
     statMods: { health: 0, violence: 1, power: 0, harmony: 1 },
-    description: "Trades raw bulk for marketable burst, lucky spikes, and quick pressure.",
+    description: "Begins as a physical and Spirit hybrid that can become aggressive or evasive.",
   },
   {
     id: "ranger",
     name: "Ranger",
-    bonus: "+8% regen, +8% max energy, +1 Harmony",
-    regen: 1.08,
-    steal: 1,
-    energy: 1.08,
-    luck: 1.08,
+    bonus: "+6 Health, +1 Might, +1 Spirit",
+    style: "Any style",
     statMods: { health: 6, violence: 1, power: 0, harmony: 1 },
-    description: "Balances exploration stats, steady recovery, and flexible race matchups.",
+    description: "Begins with a broad spread and can be trained toward any combat style.",
+  },
+];
+
+const combatStyles = [
+  {
+    id: "fortify",
+    name: "Fortify",
+    poweredBy: "Health",
+    favoredClass: "Knight",
+    selection: "Chosen when Health / 10 is the highest ability score.",
+    bio: "The defensive style. The Character uses its race's Guard attack, deals damage from Health and Might, then restores Health after every attack.",
+    result: "Best for surviving long fights. More Health improves durability, healing, and max button energy, but Health is divided by 10 when choosing the style.",
+  },
+  {
+    id: "bloodlust",
+    name: "Bloodlust",
+    poweredBy: "Might",
+    favoredClass: "Warrior",
+    selection: "Chosen when Might is the highest ability score.",
+    bio: "The physical offense style. The Character uses its race's Rush attack and converts Might into heavy direct damage. Arcana adds a smaller secondary bonus.",
+    result: "Best for straightforward damage and click income. Bloodlust does not heal, increase initiative, or improve defense.",
+  },
+  {
+    id: "sorcery",
+    name: "Sorcery",
+    poweredBy: "Arcana",
+    favoredClass: "Mage",
+    selection: "Chosen when Arcana is the highest ability score.",
+    bio: "The magical offense style. Arcana is the stat; Sorcery is the combat style it unlocks. The Character uses its race's Burst attack, with Spirit adding secondary damage.",
+    result: "Best for magical burst. High Arcana also reduces the protection an enemy receives when its Spirit is higher than your Arcana.",
+  },
+  {
+    id: "attune",
+    name: "Attune",
+    poweredBy: "Spirit",
+    favoredClass: "Shaman",
+    selection: "Chosen when Spirit is the highest ability score.",
+    bio: "The tempo and sustain style. The Character uses its race's Omen attack, deals Spirit-based damage, and restores Health after every attack.",
+    result: "Best for acting earlier, healing, resisting low-Arcana attackers, refilling button energy, and improving lucky-signal chance.",
   },
 ];
 
@@ -165,43 +114,58 @@ const affinities = [
     sprite: raceSprites.normal,
     access: "Starter",
     best: "Stable first pick",
-    description: "Beats Elemental. Neutral bodies have no trick damage, but their consistency makes them hard to punish.",
+    energy: 1000,
+    regen: 41.67,
+    steal: 1,
+    description: "Balanced button economy with a 24-hour base refill. Beats Elemental in combat.",
   },
   {
     id: "elemental",
     name: "Elemental",
     color: "#8fd3ff",
     sprite: raceSprites.elemental,
-    access: "Egg roll",
-    best: "Spell pressure",
-    description: "Beats Metal. Elemental bodies convert Power into explosive turns and strong recovery pressure.",
+    access: "Random hatch",
+    best: "Burst extraction",
+    energy: 500,
+    regen: 20.83,
+    steal: 1.8,
+    description: "Small energy pool with the highest base extraction. Beats Metal in combat.",
   },
   {
     id: "wood",
     name: "Wood",
     color: "#55ef85",
     sprite: raceSprites.wood,
-    access: "Egg roll",
-    best: "Growth and sustain",
-    description: "Beats Stone. Wood bodies reward Harmony, longer fights, and Ranger-style tempo play.",
+    access: "Random hatch",
+    best: "Fast recovery",
+    energy: 600,
+    regen: 58.33,
+    steal: 1,
+    description: "Refills in about 10.3 hours for frequent play sessions. Beats Stone in combat.",
   },
   {
     id: "stone",
     name: "Stone",
     color: "#c5aa74",
     sprite: raceSprites.stone,
-    access: "Egg roll",
-    best: "Tank brackets",
-    description: "Beats Normal. Stone bodies are slow but durable, making close tournament rounds safer.",
+    access: "Random hatch",
+    best: "Long sessions",
+    energy: 1500,
+    regen: 33.33,
+    steal: 0.75,
+    description: "Largest energy pool with slower extraction and a 45-hour base refill. Beats Normal in combat.",
   },
   {
     id: "metal",
     name: "Metal",
     color: "#b7c3d0",
     sprite: raceSprites.metal,
-    access: "Egg roll",
-    best: "Reliable strikes",
-    description: "Beats Wood. Metal bodies sharpen Violence turns and punish sustain-heavy opponents.",
+    access: "Random hatch",
+    best: "Aggressive balance",
+    energy: 800,
+    regen: 33.33,
+    steal: 1.5,
+    description: "Strong base extraction with a full-day refill profile. Beats Wood in combat.",
   },
 ];
 
@@ -219,22 +183,11 @@ const affinityIdMap = {
 };
 
 const rarities = [
-  { name: "common", weight: 58, mult: 1, bonus: 0, color: "#a9a7a0" },
-  { name: "rare", weight: 27, mult: 1.18, bonus: 2, color: "#6ea8d9" },
-  { name: "epic", weight: 12, mult: 1.38, bonus: 4, color: "#b879ff" },
+  { name: "common", weight: 45, mult: 1, bonus: 0, color: "#92979c" },
+  { name: "uncommon", weight: 25, mult: 1.08, bonus: 1, color: "#55ef85" },
+  { name: "rare", weight: 18, mult: 1.18, bonus: 2, color: "#5ea9ff" },
+  { name: "epic", weight: 9, mult: 1.38, bonus: 4, color: "#b879ff" },
   { name: "legendary", weight: 3, mult: 1.72, bonus: 7, color: "#f3c94c" },
-];
-
-const traitPool = [
-  { name: "Chrome Body", slot: "Body", statMods: { health: 12, violence: 0, power: 0, harmony: 0 } },
-  { name: "Cracked Stone Body", slot: "Body", statMods: { health: 8, violence: 1, power: 0, harmony: 0 } },
-  { name: "Overclocked Eye", slot: "Eye", statMods: { health: 0, violence: 0, power: 2, harmony: 0 } },
-  { name: "Redline Eye", slot: "Eye", statMods: { health: 0, violence: 2, power: 0, harmony: 0 } },
-  { name: "Static Mouth", slot: "Mouth", statMods: { health: 0, violence: 1, power: 1, harmony: 0 } },
-  { name: "Calm Mouth", slot: "Mouth", statMods: { health: 0, violence: 0, power: 0, harmony: 2 } },
-  { name: "Signal Bloom", slot: "Signal", statMods: { health: 0, violence: 0, power: 1, harmony: 1 } },
-  { name: "Arena Instinct", slot: "Instinct", statMods: { health: 6, violence: 1, power: 0, harmony: 0 } },
-  { name: "Mirror Omen", slot: "Instinct", statMods: { health: 0, violence: 0, power: 0, harmony: 3 } },
 ];
 
 const lootCategories = [
@@ -244,7 +197,13 @@ const lootCategories = [
     primary: "steal",
     label: "Extraction",
     unit: "x",
-    names: ["Redline Lens", "Signal Monocle", "Glare Prism", "Vault Eye", "Obsidian Scope"],
+    variants: [
+      { name: "Cracked Red Visor Lens", image: `${lootAssetRoot}/lenses/cracked-red-visor-lens.png` },
+      { name: "Gold Targeting Monocle", image: `${lootAssetRoot}/lenses/gold-targeting-monocle.png` },
+      { name: "Portal Prism Lens", image: `${lootAssetRoot}/lenses/portal-prism-lens.png` },
+      { name: "Obsidian Scope Lens", image: `${lootAssetRoot}/lenses/obsidian-scope-lens.png` },
+      { name: "All-Seeing Relic Lens", image: `${lootAssetRoot}/lenses/all-seeing-relic-lens.png` },
+    ],
     ranges: {
       common: [0.02, 0.05],
       uncommon: [0.05, 0.08],
@@ -261,7 +220,13 @@ const lootCategories = [
     primary: "regen",
     label: "Regen",
     unit: "/h",
-    names: ["Neon Boots", "Bay Runners", "Static Treads", "Pulse Greaves", "Wrong-Warp Boots"],
+    variants: [
+      { name: "Arcade Runner Boots", image: `${lootAssetRoot}/boots/arcade-runner-boots.png` },
+      { name: "Bay Technician Boots", image: `${lootAssetRoot}/boots/bay-technician-boots.png` },
+      { name: "Portal-Step Greaves", image: `${lootAssetRoot}/boots/portal-step-greaves.png` },
+      { name: "Metal-Race Combat Boots", image: `${lootAssetRoot}/boots/metal-race-combat-boots.png` },
+      { name: "Tournament Champion Boots", image: `${lootAssetRoot}/boots/tournament-champion-boots.png` },
+    ],
     ranges: {
       common: [1, 2],
       uncommon: [2, 4],
@@ -278,7 +243,12 @@ const lootCategories = [
     primary: "energy",
     label: "Max energy",
     unit: "",
-    names: ["Battery Core", "Sunken Reactor", "Chrome Heart", "Overdrive Cell", "Mark Engine"],
+    variants: [
+      { name: "Salvaged Visor Battery", image: `${lootAssetRoot}/cores/salvaged-visor-battery.png` },
+      { name: "Portal Reactor Core", image: `${lootAssetRoot}/cores/portal-reactor-core.png` },
+      { name: "Arena Heart Core", image: `${lootAssetRoot}/cores/arena-heart-core.png` },
+      { name: "Singularity Eye Core", image: `${lootAssetRoot}/cores/singularity-eye-core.png` },
+    ],
     ranges: {
       common: [20, 50],
       uncommon: [50, 100],
@@ -293,9 +263,15 @@ const lootCategories = [
     id: "charm",
     name: "Charm",
     primary: "luck",
-    label: "Lucky signal",
-    unit: "%",
-    names: ["Mirror Charm", "Glass Omen", "One-Eyed Coin", "Signal Halo", "Festival Token"],
+    label: "Signal multiplier",
+    unit: "x",
+    variants: [
+      { name: "Iron Eye Token", image: `${lootAssetRoot}/charms/iron-eye-token.png` },
+      { name: "Red Visor Pendant", image: `${lootAssetRoot}/charms/red-visor-pendant.png` },
+      { name: "Portal Shard Charm", image: `${lootAssetRoot}/charms/portal-shard-charm.png` },
+      { name: "Tournament Mark Medallion", image: `${lootAssetRoot}/charms/tournament-mark-medallion.png` },
+      { name: "Orbital Eye Charm", image: `${lootAssetRoot}/charms/orbital-eye-charm.png` },
+    ],
     ranges: {
       common: [0.1, 0.3],
       uncommon: [0.3, 0.6],
@@ -312,7 +288,13 @@ const lootCategories = [
     primary: "farm",
     label: "Bay yield",
     unit: "%",
-    names: ["Bay Relic", "Green Talisman", "Archive Key", "Circuit Idol", "Portal Fragment"],
+    variants: [
+      { name: "Scratched Visor Token", image: `${lootAssetRoot}/relics/scratched-visor-token.png` },
+      { name: "Miniature Button Shrine", image: `${lootAssetRoot}/relics/miniature-button-shrine.png` },
+      { name: "Framed Portal Fragment", image: `${lootAssetRoot}/relics/framed-portal-fragment.png` },
+      { name: "Tournament Mark Tablet", image: `${lootAssetRoot}/relics/tournament-mark-tablet.png` },
+      { name: "Crown Visor Artifact", image: `${lootAssetRoot}/relics/crown-visor-artifact.png` },
+    ],
     ranges: {
       common: [0.1, 0.25],
       uncommon: [0.25, 0.5],
@@ -338,39 +320,59 @@ const lootRarities = [
 const trainingOptions = [
   {
     id: "health",
-    label: "Weight Room",
+    label: "Health",
     stat: "health",
     safeGain: 10,
     modGain: 20,
     intenseGain: 40,
-    description: "Raises HP for battles and adds 2 max energy per HP to the clicker.",
-  },
-  {
-    id: "power",
-    label: "Sacred Flame",
-    stat: "power",
-    safeGain: 1,
-    modGain: 2,
-    intenseGain: 4,
-    description: "Raises battle spell pressure, adds 0.2 energy regen per hour, and adds 0.018 extraction per Power.",
-  },
-  {
-    id: "harmony",
-    label: "Meditation",
-    stat: "harmony",
-    safeGain: 1,
-    modGain: 2,
-    intenseGain: 4,
-    description: "Raises sustain and reflection builds, adds 0.7 energy regen per hour, and improves lucky signal odds.",
+    role: "Survival and energy capacity",
+    plain: "Train Health when you want to survive longer in battle and store more button presses before running empty.",
+    lightImpact: "One Light session adds 10 battle Health, 20 max energy, and 1 point to the Fortify selection score.",
+    caution: "Health does not increase energy refill speed or shards earned per press.",
+    description: "Each point gives +1 battle Health and +2 maximum button energy.",
+    battleFormula: "Fortify score = Health / 10. Fortify base damage = Health x 0.10 + Might x 0.90, then heals round(Health x 0.04).",
   },
   {
     id: "violence",
-    label: "Combat Drills",
+    label: "Might",
     stat: "violence",
     safeGain: 1,
     modGain: 2,
     intenseGain: 4,
-    description: "Raises battle strike pressure and adds 0.035 extraction per Violence.",
+    role: "Physical damage and click income",
+    plain: "Train Might when you want physical attacks to hit harder while also earning slightly more shards from every press.",
+    lightImpact: "One Light session adds 1 Bloodlust score, 2.10 Bloodlust base damage, 0.035 extraction, and about 0.007 shards per press.",
+    caution: "Might does not increase max energy, refill speed, initiative, or healing.",
+    description: "Each point gives +0.035 extraction, worth +0.007 base shards per press.",
+    battleFormula: "Bloodlust score = Might. Bloodlust base damage = Might x 2.10 + Arcana x 0.45. Might also adds 0.90 base damage to Fortify.",
+  },
+  {
+    id: "power",
+    label: "Arcana",
+    stat: "power",
+    safeGain: 1,
+    modGain: 2,
+    intenseGain: 4,
+    role: "Spell damage and mixed economy",
+    plain: "Train Arcana when you want strong spell attacks plus a small increase to both energy refill and shards per press.",
+    lightImpact: "One Light session adds 1 Sorcery score, 2.05 Sorcery base damage, 0.20 energy per hour, and about 0.0036 shards per press.",
+    caution: "Arcana is flexible, but Spirit refills energy faster and Might increases click income faster.",
+    description: "Each point gives +0.20 energy/hour and +0.018 extraction, worth +0.0036 base shards per press.",
+    battleFormula: "Sorcery score = Arcana. Sorcery base damage = Arcana x 2.05 + Spirit x 0.35. Arcana also helps break through an enemy's Spirit defense.",
+  },
+  {
+    id: "harmony",
+    label: "Spirit",
+    stat: "harmony",
+    safeGain: 1,
+    modGain: 2,
+    intenseGain: 4,
+    role: "Speed, healing, defense, and recovery",
+    plain: "Train Spirit when you want to act earlier, heal with Attune, resist low-Arcana attackers, refill energy faster, and find lucky signals more often.",
+    lightImpact: "One Light session adds 1 Attune score, 1 initiative, 0.70 energy per hour, and about 0.009 percentage points to lucky-signal chance.",
+    caution: "Spirit helps several systems, but it gives less direct attack damage than Might or Arcana.",
+    description: "Each point gives +0.70 energy/hour and +0.015x to the lucky-signal multiplier.",
+    battleFormula: "Attune score = Spirit. Attune base damage = Spirit x 1.65 + Arcana x 0.55, then heals round(Spirit x 0.35). Spirit also helps determine who attacks first.",
   },
 ];
 
@@ -403,7 +405,7 @@ const chapters = [
   {
     id: "character-loop",
     title: "Character loop",
-    summary: "Players begin with one Egg. Eggs hatch random Characters with loadout, race, class, rarity, traits, and stats.",
+    summary: "Players begin with one Egg. Eggs hatch random Characters with race, class, rarity, and stats.",
     facts: [
       ["Starter", "1 free Egg"],
       ["Roster", "Multiple Characters"],
@@ -412,7 +414,7 @@ const chapters = [
     ],
     body: [
       "A Character is the core playable unit. It controls clicker output and carries battle progression.",
-      "Each Character has a loadout for clicker stats, a race for battle matchups and sprite identity, a class for clicker and battle bias, traits for stat boosts, and a lifecycle state.",
+      "Race owns the button profile, sprite, and combat matchup. Class supplies starting combat-stat bonuses. Rarity, training, and loot add visible numerical bonuses.",
       "Only one Character can be active at a time. The active Character powers the visor button.",
     ],
   },
@@ -423,46 +425,31 @@ const chapters = [
     facts: [
       ["Crate", "300 shards"],
       ["Equip", "1 item per Character"],
-      ["Durability", "Power scales with condition"],
+      ["Durability", "Item bonus scales with condition"],
       ["Sinks", "Repair, scrap, market fees"],
     ],
     body: [
-      "Items should not be pure chaos. A Lens always rolls extraction, Boots always roll regen, a Core always rolls max energy, a Charm always rolls lucky signal, and a Relic always rolls bay yield.",
+      "Items should not be pure chaos. A Lens always rolls extraction, Boots always roll regen, a Core always rolls max energy, a Charm always rolls a signal multiplier, and a Relic always rolls bay yield.",
       "The random part is rarity, exact stat value, durability ceiling, and combat side rolls. That gives buyers a readable market while preserving chase value.",
-      "Loot above zero durability works. Below 50% durability it contributes 60% power. At zero durability it stays in inventory but contributes nothing until repaired.",
+      "Loot above zero durability works. Below 50% durability it contributes 60% of its listed bonuses. At zero durability it stays in inventory but contributes nothing until repaired.",
     ],
     kind: "loot",
   },
   {
-    id: "loadouts",
-    title: "Loadouts",
-    summary: "Loadouts are the clicker body plan. They set energy pool, regen profile, and base shard extraction.",
-    facts: [
-      ["Energy", "How long a session lasts"],
-      ["Regen", "How fast energy returns"],
-      ["Steal", "Shard extraction per press"],
-    ],
-    body: [
-      "Loadout numbers are the Character's clicker base before class bonuses, trained stats, account upgrades, loot, party bonus, and lucky signals are applied.",
-      "Energy is the number of presses a Character can spend. Regen is the hourly refill rate. Base extraction feeds the final shard reward per press.",
-    ],
-    kind: "loadouts",
-  },
-  {
     id: "classes",
     title: "Classes",
-    summary: "Classes add one strong clicker bias and one battle-stat bias.",
+    summary: "Classes are combat roles. They add starting stats but do not secretly multiply button output.",
     facts: classes.map((item) => [item.name, item.bonus]),
     body: [
-      "Mage helps energy regen and Power. Warrior helps shard extraction and Violence. Knight helps energy max and HP. Shaman helps lucky signals and Harmony. Rogue and Ranger add hybrid RPG paths for market and race builds.",
-      "Classes are the profession layer. A Wood Ranger and a Wood Shaman share race matchup rules, but their training priorities and clicker outputs diverge.",
+      "Mage starts with Arcana, Warrior with Might, Knight with Health, and Shaman with Spirit. Rogue and Ranger begin as hybrid roles.",
+      "A Wood Ranger and Wood Shaman share the same Wood button profile and matchup. Their class bonuses only change starting combat stats and the training path they reach fastest.",
     ],
     kind: "classes",
   },
   {
     id: "affinities",
     title: "Races",
-    summary: "Races create battle matchup edges and determine the placeholder battle sprite used for the Character.",
+    summary: "Race sets the Character's button economy, sprite, and combat matchup.",
     facts: [
       ["Normal", "Beats Elemental"],
       ["Elemental", "Beats Metal"],
@@ -471,7 +458,8 @@ const chapters = [
       ["Stone", "Beats Normal"],
     ],
     body: [
-      "Races do not change the clicker directly yet. They matter in Duels and tournaments, where matchup edges can swing close fights.",
+      "Each race has one readable base profile: maximum energy, hourly regeneration, and extraction. Training, account upgrades, and loot are added on top.",
+      "A favorable matchup multiplies final attack damage by 1.16. A disadvantage multiplies it by 0.90. Neutral matchups use 1.00.",
       "Race art is currently shared by battle sprites. The enemy uses the forward-facing PNG, and your active Character uses the same sprite mirrored until dedicated player-side sheets are ready.",
     ],
     kind: "affinities",
@@ -479,7 +467,7 @@ const chapters = [
   {
     id: "training",
     title: "Training",
-    summary: "Battles grant training points. Training increases HP, Violence, Power, or Harmony with different risk tiers.",
+    summary: "Battles grant training points. Training increases Health, Might, Arcana, or Spirit with exact clicker and combat effects.",
     facts: [
       ["Light", "100% success"],
       ["Moderate", "45% success"],
@@ -487,8 +475,10 @@ const chapters = [
       ["Cost", "1 TP per attempt"],
     ],
     body: [
-      "Weight Room trains HP, which improves survival and max energy. Combat Drills train Violence, which improves strike pressure and extraction. Sacred Flame trains Power, which improves spell pressure, regen, and extraction. Meditation trains Harmony, which improves sustain, regen, and lucky signals.",
-      "Every attempt costs 1 TP. Light training always succeeds. Moderate and intense training can fail, and failed training consumes the TP with no stat increase.",
+      "Health gives +1 battle Health and +2 max energy per point. Might gives +0.035 extraction per point. Arcana gives +0.20 energy/hour and +0.018 extraction per point. Spirit gives +0.70 energy/hour and +0.015x lucky-signal multiplier per point.",
+      "The combat ability is whichever score is highest: Health / 10 for Fortify, Might for Bloodlust, Arcana for Sorcery, or Spirit for Attune.",
+      "Final damage is round((ability base - defense pressure + a random 4 to 12) x race matchup). Defense pressure is max(0, defender Spirit - attacker Arcana) x 0.18.",
+      "Every attempt costs 1 TP. Light always succeeds and has the best average gain. Moderate and Intense are high-roll options: they can grant more at once, but failed training consumes the TP with no stat increase.",
     ],
   },
   {
@@ -579,12 +569,12 @@ const chapters = [
 ];
 
 const mockPlayers = [
-  { name: "@cyclops", character: "Neon Courier", className: "Warrior", total: 128000, steal: 2.8 },
-  { name: "0x8f...21", character: "Arcade Racketeer", className: "Rogue", total: 84000, steal: 3.1 },
-  { name: "0xa4...90", character: "Glitch Runner", className: "Mage", total: 72000, steal: 2.2 },
-  { name: "0x57...ca", character: "Cargo Bruiser", className: "Knight", total: 63400, steal: 1.9 },
-  { name: "@visorcrew", character: "Patch Prophet", className: "Shaman", total: 58150, steal: 2.4 },
-  { name: "0xd1...44", character: "Rookie Visor", className: "Ranger", total: 21400, steal: 1.1 },
+  { name: "@cyclops", character: "Elemental", className: "Warrior", total: 128000, steal: 2.8 },
+  { name: "0x8f...21", character: "Metal", className: "Rogue", total: 84000, steal: 3.1 },
+  { name: "0xa4...90", character: "Wood", className: "Mage", total: 72000, steal: 2.2 },
+  { name: "0x57...ca", character: "Stone", className: "Knight", total: 63400, steal: 1.9 },
+  { name: "@visorcrew", character: "Normal", className: "Shaman", total: 58150, steal: 2.4 },
+  { name: "0xd1...44", character: "Wood", className: "Ranger", total: 21400, steal: 1.1 },
 ];
 
 const questDefs = [
@@ -634,6 +624,8 @@ let state = loadState();
 let activeChapter = chapters[0].id;
 let activeDocFilter = "";
 let battleAnimationTimer = null;
+let audioContext = null;
+let soundEnabled = localStorage.getItem("cyclops-button-sound") !== "off";
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => Array.from(document.querySelectorAll(selector));
@@ -643,7 +635,8 @@ function loadState() {
     const saved = JSON.parse(localStorage.getItem(storageKey));
     if (saved) return normalizeState(saved);
 
-    const legacy = JSON.parse(localStorage.getItem(legacyStorageKey));
+    const legacyKey = legacyStorageKeys.find((key) => localStorage.getItem(key));
+    const legacy = legacyKey ? JSON.parse(localStorage.getItem(legacyKey)) : null;
     if (legacy) {
       return normalizeState({
         ...structuredClone(defaultState),
@@ -674,7 +667,7 @@ function normalizeState(saved) {
     characterEggs: saved.characterEggs ?? saved.characterCrates ?? defaultState.characterEggs,
     lootCratesOpened: saved.lootCratesOpened ?? saved.crates ?? 0,
     inventory: (saved.inventory || []).map(normalizeLootItem).filter(Boolean),
-    characters: (saved.characters || []).map(normalizeCharacter),
+    characters: (saved.characters || []).map((character, index) => normalizeCharacter(character, index)),
     battleLog: saved.battleLog?.length ? saved.battleLog.slice(-40) : defaultState.battleLog,
     battleScene: null,
     marks: saved.marks || [],
@@ -682,6 +675,10 @@ function normalizeState(saved) {
     chat: (saved.chat || defaultState.chat).filter((message) => ["operator", "builder", "you"].includes(message.name)),
   };
   if (!next.chat.length) next.chat = structuredClone(defaultState.chat);
+  next.marks = next.marks.map((mark) => {
+    const character = next.characters.find((entry) => entry.id === mark.characterId);
+    return character ? { ...mark, characterName: character.name } : mark;
+  });
   next.characters.forEach((character) => {
     if (!next.inventory.some((item) => item.id === character.equippedLootId)) character.equippedLootId = null;
   });
@@ -695,9 +692,19 @@ function normalizeState(saved) {
   return next;
 }
 
-function normalizeCharacter(character) {
+function normalizeCharacter(character, index = 0) {
+  const {
+    loadoutId: _legacyLoadoutId,
+    title: _legacyTitle,
+    traits: _legacyTraits,
+    ...savedCharacter
+  } = character;
   const normalizedClassId = classIdMap[character.classId] || character.classId || classes[0].id;
   const normalizedAffinityId = affinityIdMap[character.affinityId] || character.affinityId || affinities[0].id;
+  const rarityName = getRarity(character.rarity).name;
+  const isAiCharacter = String(character.id || "").startsWith("ai-");
+  const canonicalName = /^[A-Z]+-\d{3,}$/.test(String(character.name || ""));
+  const name = isAiCharacter || canonicalName ? character.name : `${rarityName.toUpperCase()}-${String(index + 1).padStart(3, "0")}`;
   return {
     trainingPoints: 1,
     trainedStats: { health: 0, violence: 0, power: 0, harmony: 0 },
@@ -709,25 +716,12 @@ function normalizeCharacter(character) {
     marked: false,
     equippedLootId: null,
     lootPressCounter: 0,
-    ...character,
+    ...savedCharacter,
+    name,
+    rarity: rarityName,
     classId: normalizedClassId,
     affinityId: normalizedAffinityId,
-    traits: (character.traits || []).map(normalizeTrait),
     trainedStats: { health: 0, violence: 0, power: 0, harmony: 0, ...(character.trainedStats || {}) },
-  };
-}
-
-function normalizeTrait(trait) {
-  if (!trait) return trait;
-  const slot = trait.slot?.startsWith("Equip") ? "Instinct" : trait.slot;
-  const nameMap = {
-    "Arena Kit": "Arena Instinct",
-    "Mirror Charm": "Mirror Omen",
-  };
-  return {
-    ...trait,
-    slot,
-    name: nameMap[trait.name] || trait.name,
   };
 }
 
@@ -737,10 +731,6 @@ function saveState() {
 
 function getActiveCharacter() {
   return state.characters.find((character) => character.id === state.activeCharacterId) || null;
-}
-
-function getLoadout(id) {
-  return loadouts.find((item) => item.id === id) || loadouts[0];
 }
 
 function getClass(id) {
@@ -758,11 +748,28 @@ function getRaceSprite(id) {
 }
 
 function getRarity(name) {
-  return rarities.find((item) => item.name === name) || rarities[0];
+  const normalized = String(name || "").toLowerCase();
+  return rarities.find((item) => item.name === normalized) || rarities[0];
 }
 
 function getLootCategory(id) {
   return lootCategories.find((item) => item.id === id) || lootCategories[0];
+}
+
+function hashString(value) {
+  let hash = 2166136261;
+  for (const char of String(value)) {
+    hash ^= char.charCodeAt(0);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
+}
+
+function getLootVariant(category, name, seed) {
+  const normalizedName = String(name || "").toLowerCase();
+  const exact = category.variants.find((variant) => normalizedName.includes(variant.name.toLowerCase()));
+  if (exact) return exact;
+  return category.variants[hashString(seed || normalizedName || category.id) % category.variants.length];
 }
 
 function getLootRarity(name) {
@@ -816,11 +823,6 @@ function getCharacterStats(character) {
   for (const [stat, value] of Object.entries(classInfo.statMods)) {
     stats[stat] += value;
   }
-  for (const trait of character.traits || []) {
-    for (const [stat, value] of Object.entries(trait.statMods || {})) {
-      stats[stat] += value;
-    }
-  }
   for (const [stat, value] of Object.entries(character.trainedStats || {})) {
     stats[stat] += value;
   }
@@ -833,19 +835,28 @@ function getCharacterStats(character) {
 function getStats() {
   const character = getActiveCharacter();
   if (!character || character.state === "dead") {
-    return { maxEnergy: 0, regen: 0, steal: 0, reward: 0, partyBonus: 1, luck: 0, characterStats: getCharacterStats(null) };
+    return {
+      maxEnergy: 0,
+      regen: 0,
+      steal: 0,
+      reward: 0,
+      partyBonus: 1,
+      luck: 0,
+      luckyChance: 0,
+      characterStats: getCharacterStats(null),
+    };
   }
-  const loadout = getLoadout(character.loadoutId);
-  const classInfo = getClass(character.classId);
+  const race = getAffinity(character.affinityId);
   const battleStats = getCharacterStats(character);
   const loot = getLootBonuses(character);
-  const maxEnergy = Math.round((loadout.energy + state.levels.maxEnergy * 80 + loot.energy + battleStats.health * 2) * classInfo.energy);
-  const regen = (loadout.regen + state.levels.regen * 7 + loot.regen + battleStats.harmony * 0.7 + battleStats.power * 0.2) * classInfo.regen;
-  const steal = (loadout.steal + state.levels.steal * 0.18 + loot.steal + battleStats.violence * 0.035 + battleStats.power * 0.018) * classInfo.steal;
+  const maxEnergy = Math.round(race.energy + state.levels.maxEnergy * 80 + loot.energy + battleStats.health * 2);
+  const regen = race.regen + state.levels.regen * 7 + loot.regen + battleStats.harmony * 0.7 + battleStats.power * 0.2;
+  const steal = race.steal + state.levels.steal * 0.18 + loot.steal + battleStats.violence * 0.035 + battleStats.power * 0.018;
   const partyBonus = state.referrals >= 2 ? 1.018 : 1;
   const reward = 0.2 * steal * partyBonus;
-  const luck = classInfo.luck + loot.luck + battleStats.harmony * 0.015;
-  return { maxEnergy, regen, steal, reward, partyBonus, luck, characterStats: battleStats, loot };
+  const luck = 1 + loot.luck + battleStats.harmony * 0.015;
+  const luckyChance = 0.00582 * luck;
+  return { maxEnergy, regen, steal, reward, partyBonus, luck, luckyChance, characterStats: battleStats, loot };
 }
 
 function tick() {
@@ -880,12 +891,12 @@ function money(value) {
   return `${fmt(value, value < 1000 ? 2 : 0)} shards`;
 }
 
-function loadoutRefillHours(loadout) {
-  return loadout.regen <= 0 ? 0 : loadout.energy / loadout.regen;
+function raceRefillHours(race) {
+  return race.regen <= 0 ? 0 : race.energy / race.regen;
 }
 
-function loadoutMetricLine(loadout) {
-  return `${fmt(loadout.energy)} energy | ${fmt(loadout.regen, 2)} energy/h | ~${fmt(loadoutRefillHours(loadout), 1)}h refill | ${fmt(loadout.steal, 2)} base extraction`;
+function raceMetricLine(race) {
+  return `${fmt(race.energy)} base energy | ${fmt(race.regen, 2)} energy/h | ~${fmt(raceRefillHours(race), 1)}h refill | ${fmt(race.steal, 2)} base extraction`;
 }
 
 function costFor(type) {
@@ -912,14 +923,17 @@ function addBattleLog(message) {
 }
 
 function routeTo(route) {
-  const target = $(`[data-view="${route}"]`) ? route : "home";
+  const target = $(`[data-view="${route}"]`) ? route : "play";
   $$(".view").forEach((view) => view.classList.toggle("is-active", view.dataset.view === target));
   $$("[data-route-link]").forEach((link) => link.classList.toggle("is-active", link.dataset.routeLink === target));
   $("#topNav").classList.remove("is-open");
   $("#navToggle").setAttribute("aria-expanded", "false");
+  $("#moreNav")?.classList.remove("is-open");
+  $("#moreToggle")?.setAttribute("aria-expanded", "false");
   if (location.hash.slice(1) !== target) {
     history.replaceState(null, "", `#${target}`);
   }
+  playSfx("navigate");
   render();
 }
 
@@ -936,7 +950,13 @@ function initNavigation() {
     nav.classList.toggle("is-open", open);
     $("#navToggle").setAttribute("aria-expanded", String(open));
   });
-  window.addEventListener("hashchange", () => routeTo(location.hash.slice(1) || "home"));
+  $("#moreToggle").addEventListener("click", () => {
+    const nav = $("#moreNav");
+    const open = !nav.classList.contains("is-open");
+    nav.classList.toggle("is-open", open);
+    $("#moreToggle").setAttribute("aria-expanded", String(open));
+  });
+  window.addEventListener("hashchange", () => routeTo(location.hash.slice(1) || "play"));
 }
 
 function initTheme() {
@@ -964,6 +984,7 @@ function initControls() {
     renderDocs();
   });
   $("#buyFarm").addEventListener("click", buyFarm);
+  $("#buyFarmMain").addEventListener("click", buyFarm);
   $("#openCrate").addEventListener("click", openLootCrate);
   $("#settleMarket").addEventListener("click", settleMarket);
   $("#copyReferral").addEventListener("click", copyReferral);
@@ -973,6 +994,83 @@ function initControls() {
   $("#rerollActive").addEventListener("click", rerollActiveCharacter);
   $("#duelButton").addEventListener("click", fightNextBattle);
   $("#practiceButton").addEventListener("click", practiceBattle);
+  $("#devAddShards").addEventListener("click", addDevShards);
+  $("#soundToggle").addEventListener("click", toggleSound);
+  renderSoundToggle();
+}
+
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  localStorage.setItem("cyclops-button-sound", soundEnabled ? "on" : "off");
+  renderSoundToggle();
+  if (soundEnabled) playSfx("confirm");
+}
+
+function renderSoundToggle() {
+  const button = $("#soundToggle");
+  if (!button) return;
+  button.setAttribute("aria-pressed", String(soundEnabled));
+  button.textContent = soundEnabled ? "Sound" : "Muted";
+}
+
+function getAudioContext() {
+  if (!soundEnabled) return null;
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextClass) return null;
+  audioContext ||= new AudioContextClass();
+  if (audioContext.state === "suspended") audioContext.resume();
+  return audioContext;
+}
+
+function playTone(frequency, duration, type = "square", volume = 0.035, delay = 0, endFrequency = null) {
+  const context = getAudioContext();
+  if (!context) return;
+  const start = context.currentTime + delay;
+  const oscillator = context.createOscillator();
+  const gain = context.createGain();
+  oscillator.type = type;
+  oscillator.frequency.setValueAtTime(frequency, start);
+  if (endFrequency) oscillator.frequency.exponentialRampToValueAtTime(endFrequency, start + duration);
+  gain.gain.setValueAtTime(0.0001, start);
+  gain.gain.exponentialRampToValueAtTime(volume, start + 0.008);
+  gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+  oscillator.connect(gain);
+  gain.connect(context.destination);
+  oscillator.start(start);
+  oscillator.stop(start + duration + 0.02);
+}
+
+function playSfx(name) {
+  if (!soundEnabled) return;
+  if (name === "press") {
+    playTone(92, 0.085, "square", 0.045, 0, 62);
+    playTone(420, 0.055, "triangle", 0.025, 0.02, 620);
+  } else if (name === "lucky") {
+    [620, 780, 980].forEach((frequency, index) => playTone(frequency, 0.15, "square", 0.025, index * 0.055));
+  } else if (name === "attack") {
+    playTone(155, 0.12, "sawtooth", 0.035, 0, 72);
+    playTone(510, 0.06, "square", 0.018, 0.055, 180);
+  } else if (name === "hit") {
+    playTone(74, 0.16, "square", 0.05, 0, 42);
+  } else if (name === "victory") {
+    [392, 523, 659, 784].forEach((frequency, index) => playTone(frequency, 0.2, "square", 0.025, index * 0.08));
+  } else if (name === "purchase") {
+    playTone(310, 0.08, "square", 0.025);
+    playTone(465, 0.11, "square", 0.025, 0.07);
+  } else if (name === "confirm") {
+    playTone(440, 0.09, "triangle", 0.025, 0, 660);
+  } else if (name === "navigate") {
+    playTone(240, 0.04, "square", 0.012);
+  }
+}
+
+function addDevShards() {
+  state.shards += 1000;
+  $("#topNav").classList.remove("is-open");
+  $("#navToggle").setAttribute("aria-expanded", "false");
+  saveState();
+  render();
+  showToast("DEV: added 1,000 test shards.");
 }
 
 function pressButton() {
@@ -994,11 +1092,13 @@ function pressButton() {
   const stats = getStats();
   state.energy -= 1;
   let gain = stats.reward;
-  const luckyChance = 0.00582 * stats.luck;
+  const luckyChance = stats.luckyChance;
+  let luckySignal = false;
   let note = `${character.name} extracted +${fmt(gain, 2)} shards.`;
   if (Math.random() < luckyChance) {
     const lucky = 2 + Math.random() * 38;
     gain += lucky;
+    luckySignal = true;
     note = `${character.name} hit a lucky signal: +${fmt(gain, 2)} total.`;
   }
   state.shards += gain;
@@ -1012,6 +1112,23 @@ function pressButton() {
   $("#lastPressNote").textContent = note;
   saveState();
   render();
+  playSfx(luckySignal ? "lucky" : "press");
+  animatePress(gain, luckySignal);
+}
+
+function animatePress(gain, luckySignal) {
+  const button = $("#pressButton");
+  const effects = $("#pressEffects");
+  if (!button || !effects) return;
+  button.classList.remove("is-pressed");
+  void button.offsetWidth;
+  button.classList.add("is-pressed");
+  window.setTimeout(() => button.classList.remove("is-pressed"), 130);
+  const float = document.createElement("span");
+  float.className = `press-float${luckySignal ? " is-lucky" : ""}`;
+  float.textContent = `+${fmt(gain, 2)}${luckySignal ? " Lucky signal" : ""}`;
+  effects.appendChild(float);
+  window.setTimeout(() => float.remove(), 950);
 }
 
 function buyUpgrade(type) {
@@ -1026,6 +1143,7 @@ function buyUpgrade(type) {
   state.levels[type] += 1;
   saveState();
   render();
+  playSfx("purchase");
   showToast("Upgrade bought and shards burned.");
 }
 
@@ -1041,6 +1159,7 @@ function buyFarm() {
   state.farmLevel += 1;
   saveState();
   render();
+  playSfx("purchase");
   showToast("Bay level bought.");
 }
 
@@ -1072,11 +1191,15 @@ function normalizeLootItem(item) {
   const range = category.ranges[rarity.name];
   const primaryValue = Number(item.primaryValue ?? item.value ?? randomBetween(range, category.primary === "energy" ? 0 : 2));
   const quality = item.quality ?? Math.max(0, Math.min(1, (primaryValue - range[0]) / Math.max(0.0001, range[1] - range[0])));
+  const normalizedItemName = String(item.name || "").toLowerCase();
+  const knownVariant = category.variants.find((entry) => normalizedItemName.includes(entry.name.toLowerCase()));
+  const variant = knownVariant || getLootVariant(category, item.name, item.id);
   return {
     id: item.id || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random())),
-    name: item.name || `${rarity.name.toUpperCase()} ${randomFrom(category.names)}`,
+    name: knownVariant ? item.name : `${rarity.name.toUpperCase()} ${variant.name}`,
     categoryId: category.id,
     category: category.name,
+    image: variant.image,
     primaryStat: item.primaryStat || category.primary,
     primaryValue,
     sideStats: { ...(item.sideStats || {}) },
@@ -1092,13 +1215,15 @@ function normalizeLootItem(item) {
 function createLootItem() {
   const category = randomFrom(lootCategories);
   const rarity = weightedPick(lootRarities);
+  const variant = randomFrom(category.variants);
   const range = category.ranges[rarity.name];
   const primaryValue = randomBetween(range, category.primary === "energy" ? 0 : 2);
   const quality = Math.max(0, Math.min(1, (primaryValue - range[0]) / Math.max(0.0001, range[1] - range[0])));
   return normalizeLootItem({
     id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
-    name: `${rarity.name.toUpperCase()} ${randomFrom(category.names)}`,
+    name: `${rarity.name.toUpperCase()} ${variant.name}`,
     categoryId: category.id,
+    image: variant.image,
     primaryStat: category.primary,
     primaryValue,
     sideStats: rollLootSideStats(rarity),
@@ -1194,45 +1319,18 @@ function formatSideStats(item) {
 
 function createCharacter() {
   const rarity = weightedPick(rarities);
-  const loadout = weightedLoadout(rarity);
   const classInfo = randomFrom(classes);
   const affinity = randomFrom(affinities);
-  const traits = rollTraits(rarity);
   state.charactersMinted += 1;
   const serial = String(state.charactersMinted).padStart(3, "0");
   return normalizeCharacter({
     id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
     name: `${rarity.name.toUpperCase()}-${serial}`,
-    loadoutId: loadout.id,
     classId: classInfo.id,
     affinityId: affinity.id,
     rarity: rarity.name,
-    traits,
     mintedAt: Date.now(),
   });
-}
-
-function weightedLoadout(rarity) {
-  const regular = loadouts.slice(0, 5);
-  const rare = loadouts.slice(5);
-  if (rarity.name === "epic" || rarity.name === "legendary") return Math.random() < 0.5 ? randomFrom(rare) : randomFrom(loadouts);
-  if (rarity.name === "rare") return Math.random() < 0.25 ? randomFrom(rare) : randomFrom(loadouts);
-  return randomFrom(regular);
-}
-
-function rollTraits(rarity) {
-  const count = rarity.name === "legendary" ? 4 : rarity.name === "epic" ? 3 : 2;
-  const pool = [...traitPool];
-  const traits = [];
-  for (let index = 0; index < count; index += 1) {
-    const trait = pool.splice(Math.floor(Math.random() * pool.length), 1)[0];
-    const scaled = {};
-    for (const [stat, value] of Object.entries(trait.statMods)) {
-      scaled[stat] = Math.round(value * rarity.mult);
-    }
-    traits.push({ ...trait, statMods: scaled });
-  }
-  return traits;
 }
 
 function openCharacterEgg() {
@@ -1249,6 +1347,7 @@ function openCharacterEgg() {
   addBattleLog(`${character.name} hatched from a Character Egg.`);
   saveState();
   render();
+  playSfx("victory");
   showToast(`${character.name} hatched.`);
 }
 
@@ -1262,6 +1361,7 @@ function buyCharacterEgg() {
   state.characterEggs += 1;
   saveState();
   render();
+  playSfx("purchase");
   showToast("Character Egg bought.");
 }
 
@@ -1300,6 +1400,7 @@ function selectCharacter(id) {
   state.energy = Math.min(state.energy, getStatsForCharacter(character).maxEnergy);
   saveState();
   render();
+  playSfx("confirm");
   showToast(`${character.name} selected.`);
 }
 
@@ -1332,9 +1433,11 @@ function trainCharacter(stat, modeId) {
     const gain = option[mode.gainKey];
     character.trainedStats[stat] += gain;
     addBattleLog(`${character.name} completed ${mode.label} ${option.label}: +${gain} ${labelStat(stat)}.`);
+    playSfx("victory");
     showToast(`Training success: +${gain} ${labelStat(stat)}.`);
   } else {
     addBattleLog(`${character.name} failed ${mode.label} ${option.label}. TP lost.`);
+    playSfx("hit");
     showToast("Training failed. TP lost.");
   }
   saveState();
@@ -1342,7 +1445,269 @@ function trainCharacter(stat, modeId) {
 }
 
 function labelStat(stat) {
-  return stat === "health" ? "HP" : stat[0].toUpperCase() + stat.slice(1);
+  return {
+    health: "Health",
+    violence: "Might",
+    power: "Arcana",
+    harmony: "Spirit",
+  }[stat] || stat;
+}
+
+function statEffectLine(stat, stats) {
+  if (stat === "health") return `Battle Health ${fmt(stats.health)} | +${fmt(stats.health * 2)} max energy`;
+  if (stat === "violence") return `+${fmt(stats.violence * 0.035, 3)} extraction`;
+  if (stat === "power") return `+${fmt(stats.power * 0.2, 2)} energy/h | +${fmt(stats.power * 0.018, 3)} extraction`;
+  if (stat === "harmony") return `+${fmt(stats.harmony * 0.7, 2)} energy/h | +${fmt(stats.harmony * 0.015, 3)}x signal`;
+  return "";
+}
+
+const characterStatKeys = ["health", "violence", "power", "harmony"];
+
+function renderCharacterStatGrid(character) {
+  const stats = getCharacterStats(character);
+  const trained = character.trainedStats || {};
+  return `
+    <div class="character-stat-grid">
+      ${characterStatKeys
+        .map(
+          (stat) => `
+          <span>
+            <small>${labelStat(stat)}</small>
+            <strong>${fmt(stats[stat])}</strong>
+            <em>${statEffectLine(stat, stats)}</em>
+            <i>Trained +${fmt(trained[stat] || 0)}</i>
+          </span>
+        `,
+        )
+        .join("")}
+    </div>
+  `;
+}
+
+function getCharacterStatSources(character, stat) {
+  const rarity = getRarity(character.rarity);
+  const classInfo = getClass(character.classId);
+  const loot = getLootBonuses(character);
+  const base = stat === "health" ? 50 : 5;
+  const rarityBonus = rarity.bonus * (stat === "health" ? 4 : 1);
+  const classBonus = classInfo.statMods[stat] || 0;
+  const trainingBonus = character.trainedStats?.[stat] || 0;
+  const lootBonus = loot.combat[stat] || 0;
+  return {
+    base,
+    rarityBonus,
+    classBonus,
+    trainingBonus,
+    lootBonus,
+    total: base + rarityBonus + classBonus + trainingBonus + lootBonus,
+  };
+}
+
+function renderStatSourceTable(character) {
+  return `
+    <div class="stat-source-table">
+      <div class="stat-source-heading">
+        <strong>Where the totals come from</strong>
+        <span>Base + rarity + class + training + equipped loot</span>
+      </div>
+      ${characterStatKeys
+        .map((stat) => {
+          const source = getCharacterStatSources(character, stat);
+          return `
+            <div class="stat-source-row">
+              <strong>${labelStat(stat)} ${fmt(source.total)}</strong>
+              <span>${fmt(source.base)} base + ${fmt(source.rarityBonus)} rarity + ${fmt(source.classBonus)} class + ${fmt(
+                source.trainingBonus,
+              )} training + ${fmt(source.lootBonus)} loot</span>
+            </div>
+          `;
+        })
+        .join("")}
+    </div>
+  `;
+}
+
+function renderRaceProfile(race) {
+  return `
+    <div class="race-profile" style="--affinity:${race.color}">
+      <div>
+        <span>Race profile</span>
+        <strong>${race.name}: ${race.best}</strong>
+      </div>
+      <p>${race.description}</p>
+      <small>${raceMetricLine(race)} | ${raceMatchupLine(race.id)}</small>
+    </div>
+  `;
+}
+
+function renderClassProfile(classInfo) {
+  return `
+    <div class="class-profile">
+      <div>
+        <span>Class profile</span>
+        <strong>${classInfo.name}: ${classInfo.bonus}</strong>
+      </div>
+      <p>${classInfo.description}</p>
+      <small>Starts closer to ${classInfo.style}.</small>
+    </div>
+  `;
+}
+
+function renderCurrentOutput(character) {
+  const stats = getStatsForCharacter(character);
+  return `
+    <div class="current-output">
+      <span><small>Max energy</small><strong>${fmt(stats.maxEnergy)}</strong></span>
+      <span><small>Regen / hour</small><strong>${fmt(stats.regen, 2)}</strong></span>
+      <span><small>Extraction</small><strong>${fmt(stats.steal, 3)}</strong></span>
+      <span><small>Shards / press</small><strong>${fmt(stats.reward, 3)}</strong></span>
+      <span><small>Lucky signal</small><strong>${fmt(stats.luckyChance * 100, 3)}%</strong></span>
+    </div>
+  `;
+}
+
+function clickerFormulaRows(character) {
+  const race = getAffinity(character.affinityId);
+  const battleStats = getCharacterStats(character);
+  const loot = getLootBonuses(character);
+  const stats = getStatsForCharacter(character);
+  return [
+    [
+      "Max energy",
+      `${fmt(race.energy)} race + ${fmt(state.levels.maxEnergy * 80)} upgrades + ${fmt(loot.energy)} Core + ${fmt(
+        battleStats.health * 2,
+      )} from Health = ${fmt(stats.maxEnergy)}`,
+    ],
+    [
+      "Regen / hour",
+      `${fmt(race.regen, 2)} race + ${fmt(state.levels.regen * 7, 2)} upgrades + ${fmt(loot.regen, 2)} Boots + ${fmt(
+        battleStats.harmony * 0.7,
+        2,
+      )} Spirit + ${fmt(battleStats.power * 0.2, 2)} Arcana = ${fmt(stats.regen, 2)}`,
+    ],
+    [
+      "Extraction",
+      `${fmt(race.steal, 3)} race + ${fmt(state.levels.steal * 0.18, 3)} upgrades + ${fmt(loot.steal, 3)} Lens + ${fmt(
+        battleStats.violence * 0.035,
+        3,
+      )} Might + ${fmt(battleStats.power * 0.018, 3)} Arcana = ${fmt(stats.steal, 3)}`,
+    ],
+    ["Shards / press", `0.20 x ${fmt(stats.steal, 3)} extraction x ${fmt(stats.partyBonus, 3)} party = ${fmt(stats.reward, 3)}`],
+    [
+      "Lucky signal",
+      `0.582% x (1 + ${fmt(loot.luck, 3)} Charm + ${fmt(battleStats.harmony * 0.015, 3)} Spirit) = ${fmt(
+        stats.luckyChance * 100,
+        3,
+      )}%`,
+    ],
+  ];
+}
+
+function getAbilityScores(character) {
+  if (!character) return [];
+  const stats = getCharacterStats(character);
+  return [
+    { ability: "Fortify", stat: "Health", score: stats.health / 10, note: `${fmt(stats.health)} Health / 10` },
+    { ability: "Bloodlust", stat: "Might", score: stats.violence, note: `${fmt(stats.violence)} Might` },
+    { ability: "Sorcery", stat: "Arcana", score: stats.power, note: `${fmt(stats.power)} Arcana` },
+    { ability: "Attune", stat: "Spirit", score: stats.harmony, note: `${fmt(stats.harmony)} Spirit` },
+  ];
+}
+
+function renderStatPrimer(character) {
+  const scores = getAbilityScores(character);
+  const preferred = scores.length ? [...scores].sort((left, right) => right.score - left.score)[0] : null;
+  return `
+    <section class="stat-primer">
+      <div class="stat-primer-head">
+        <div>
+          <p class="eyebrow">Start here</p>
+          <h3>What the numbers actually mean</h3>
+        </div>
+        <span class="pill">Plain-language guide</span>
+      </div>
+
+      <div class="stat-system-note">
+        <strong>Every stat has two jobs.</strong>
+        <span>It changes the clicker economy and it changes autobattle behavior. Race supplies the base button profile. Class only gives the Character a starting stat bonus.</span>
+      </div>
+
+      <h4>Button terms</h4>
+      <div class="stat-glossary">
+        <div><strong>Max energy</strong><span>How many presses you can store. One press costs 1 energy.</span></div>
+        <div><strong>Regen / hour</strong><span>How much spent energy returns each hour.</span></div>
+        <div><strong>Extraction</strong><span>The income rating. Every 1.00 extraction becomes 0.20 base shards per press.</span></div>
+        <div><strong>Shards / press</strong><span>The amount you actually receive from a normal button press.</span></div>
+        <div><strong>Lucky signal</strong><span>The chance for a press to add a random bonus of 2 to 40 shards.</span></div>
+      </div>
+
+      <h4>Choose a stat by the result you want</h4>
+      <div class="stat-role-grid">
+        ${trainingOptions
+          .map(
+            (option) => `
+            <article class="stat-role">
+              <div>
+                <span>${option.role}</span>
+                <h5>${option.label}</h5>
+              </div>
+              <p>${option.plain}</p>
+              <strong>${option.lightImpact}</strong>
+              <small>${option.caution}</small>
+            </article>
+          `,
+          )
+          .join("")}
+      </div>
+
+      <div class="ability-explainer">
+        <div>
+          <span>How autobattle chooses a move</span>
+          <h4>The highest ability score becomes the Character's attack style.</h4>
+          <p>Health is divided by 10 because Health uses larger numbers. The Character does not choose from four moves each turn; it repeatedly uses the ability with the highest score.</p>
+          <p>The selection score only chooses the move. Damage is calculated afterward from that move's formula, enemy defense, a random 4 to 12, and the race matchup.</p>
+        </div>
+        ${
+          character
+            ? `
+              <div class="ability-score-list">
+                ${scores
+                  .map(
+                    (entry) => `
+                    <div class="${entry.ability === preferred.ability ? "is-leading" : ""}">
+                      <span>${entry.ability} from ${entry.stat}</span>
+                      <strong>${fmt(entry.score, 1)}</strong>
+                      <small>${entry.note}</small>
+                    </div>
+                  `,
+                  )
+                  .join("")}
+              </div>
+              <p class="ability-result"><strong>${character.name} currently uses ${preferred.ability}</strong> because ${preferred.note} gives the highest selection score of ${fmt(preferred.score, 1)}.</p>
+            `
+            : `<p class="ability-result">Hatch and select a Character to see its four live ability scores compared here.</p>`
+        }
+      </div>
+
+      <h4>Combat style bios</h4>
+      <div class="combat-style-grid">${combatStyles.map((style) => renderCombatStyleCard(style)).join("")}</div>
+    </section>
+  `;
+}
+
+function renderCombatStyleCard(style, modifier = "") {
+  return `
+    <article class="combat-style-card ${modifier}">
+      <div>
+        <span>${style.poweredBy}-powered</span>
+        <h5>${style.name}</h5>
+      </div>
+      <strong>${style.selection}</strong>
+      <p>${style.bio}</p>
+      <small>${style.result}</small>
+      <em>Natural class: ${style.favoredClass}</em>
+    </article>
+  `;
 }
 
 function openLootCrate() {
@@ -1358,9 +1723,18 @@ function openLootCrate() {
   state.inventory.unshift(item);
   const character = getActiveCharacter();
   if (character && !character.equippedLootId) character.equippedLootId = item.id;
-  $("#crateResult").innerHTML = `<strong>${item.name}</strong><br>${item.rarity} ${item.category}: ${formatLootPrimary(item)} | ${formatSideStats(item)}`;
+  $("#crateResult").innerHTML = `
+    <div class="crate-loot-result">
+      ${renderLootVisual(item, "is-crate")}
+      <div>
+        <strong>${item.name}</strong>
+        <span>${item.rarity} ${item.category}: ${formatLootPrimary(item)} | ${formatSideStats(item)}</span>
+      </div>
+    </div>
+  `;
   saveState();
   render();
+  playSfx("victory");
   showToast(`${item.name} rolled.`);
 }
 
@@ -1375,6 +1749,7 @@ function equipItem(id) {
   character.equippedLootId = item.id;
   saveState();
   render();
+  playSfx("confirm");
   showToast(`${item.name} equipped to ${character.name}.`);
 }
 
@@ -1395,6 +1770,7 @@ function repairLoot(id) {
   item.durability = item.maxDurability;
   saveState();
   render();
+  playSfx("purchase");
   showToast(`${item.name} repaired.`);
 }
 
@@ -1614,17 +1990,14 @@ function runTournament(character) {
 
 function createAiCharacter(seed) {
   const rarity = seed > 10 && Math.random() < 0.3 ? rarities[1] : weightedPick(rarities);
-  const loadout = randomFrom(loadouts);
   const classInfo = randomFrom(classes);
   const affinity = randomFrom(affinities);
   return normalizeCharacter({
     id: `ai-${Date.now()}-${Math.random()}`,
     name: `${randomFrom(["STATIC", "RIVAL", "GHOST", "NOISE", "NULL"])}-${Math.floor(Math.random() * 900 + 100)}`,
-    loadoutId: loadout.id,
     classId: classInfo.id,
     affinityId: affinity.id,
     rarity: rarity.name,
-    traits: rollTraits(rarity),
     trainedStats: {
       health: Math.floor(seed * 7 * Math.random()),
       violence: Math.floor(seed * Math.random()),
@@ -1659,7 +2032,10 @@ function resolveBattle(left, right) {
     }
     events.push({
       side,
-      text: `${attacker.name} used ${attack.name} for ${attack.damage} damage${attack.heal ? ` and recovered ${attack.heal} HP` : ""}.`,
+      ability: attack.ability,
+      damage: attack.damage,
+      heal: attack.heal,
+      text: `${attacker.name} used ${attack.name} for ${attack.damage} damage${attack.heal ? ` and recovered ${attack.heal} Health` : ""}.`,
       leftHp,
       rightHp,
     });
@@ -1667,7 +2043,7 @@ function resolveBattle(left, right) {
 
   const winnerSide = leftHp === rightHp ? (leftStats.harmony >= rightStats.harmony ? "left" : "right") : leftHp > rightHp ? "left" : "right";
   const win = winnerSide === "left";
-  const reason = `${win ? left.name : right.name} finished with ${fmt(win ? leftHp : rightHp)} HP after ${events.length} turns.`;
+  const reason = `${win ? left.name : right.name} finished with ${fmt(win ? leftHp : rightHp)} Health after ${events.length} turns.`;
   events.push({
     side: winnerSide,
     text: `${win ? left.name : right.name} wins the exchange.`,
@@ -1692,7 +2068,7 @@ function createBattleAttack(attacker, defender) {
   };
   const damage = Math.max(2, Math.round((bases[ability] - defensePressure + 4 + Math.random() * 8) * matchup));
   const heal = ability === "Attune" ? Math.max(0, Math.round(stats.harmony * 0.35)) : ability === "Fortify" ? Math.max(0, Math.round(stats.health * 0.04)) : 0;
-  return { name: attackNameForAbility(ability, attacker.affinityId), damage, heal };
+  return { name: attackNameForAbility(ability, attacker.affinityId), ability, damage, heal };
 }
 
 function attackNameForAbility(ability, affinityId) {
@@ -1762,18 +2138,21 @@ function playBattleScene(scene) {
   window.clearTimeout(battleAnimationTimer);
   state.battleScene = { ...scene, running: true, index: 0 };
   renderArena();
+  playSfx("attack");
   const advance = () => {
     if (!state.battleScene) return;
     if (state.battleScene.index < state.battleScene.events.length - 1) {
       state.battleScene.index += 1;
       renderArena();
-      battleAnimationTimer = window.setTimeout(advance, 760);
+      const event = state.battleScene.events[state.battleScene.index];
+      playSfx(event.final ? "victory" : event.damage ? "hit" : "attack");
+      battleAnimationTimer = window.setTimeout(advance, 920);
       return;
     }
     state.battleScene.running = false;
     renderArena();
   };
-  battleAnimationTimer = window.setTimeout(advance, 760);
+  battleAnimationTimer = window.setTimeout(advance, 920);
 }
 
 function claimQuest(id) {
@@ -1858,17 +2237,17 @@ function renderStats() {
   const character = getActiveCharacter();
   const energyPct = stats.maxEnergy ? Math.max(0, Math.min(100, (state.energy / stats.maxEnergy) * 100)) : 0;
   $("#statsRail").innerHTML = [
-    ["Balance", money(state.shards)],
-    ["Total earned", money(state.totalEarned)],
-    ["Energy", stats.maxEnergy ? `${fmt(state.energy)} / ${fmt(stats.maxEnergy)}` : "No Character"],
-    ["Regen", `${fmt(stats.regen, 2)}/h`],
-    ["Extract", `${fmt(stats.steal, 2)}x`],
+    ["Energy", stats.maxEnergy ? `${fmt(state.energy)} / ${fmt(stats.maxEnergy)}` : "No Character", "is-energy"],
+    ["Regen / hour", `${fmt(stats.regen, 2)}`, "is-regen"],
+    ["Extraction", `${fmt(stats.steal, 3)}`, "is-extraction"],
+    ["Shards / press", character ? fmt(stats.reward, 3) : "0.000", "is-reward"],
+    ["Shards", fmt(state.shards, 2), "is-shards"],
   ]
-    .map(([label, value]) => `<div class="stat-pill"><span>${label}</span><strong>${value}</strong></div>`)
+    .map(([label, value, className]) => `<div class="hud-stat ${className}"><span>${label}</span><strong>${value}</strong></div>`)
     .join("");
   $("#energyBar").style.width = `${energyPct}%`;
   $("#energyLabel").textContent = stats.maxEnergy ? `Energy: ${fmt(state.energy)} / ${fmt(stats.maxEnergy)}` : "Energy: no active Character";
-  $("#rewardLabel").textContent = character ? `${fmt(stats.reward, 2)} per press` : "Hatch an Egg first";
+  $("#rewardLabel").textContent = character ? `${fmt(stats.reward, 3)} shards / press` : "Hatch an Egg first";
   $("#playStageMeta").innerHTML = [
     ["Wallet", "0xCYC...LOCAL"],
     ["Character", character ? character.name : "None"],
@@ -1882,36 +2261,115 @@ function renderStats() {
   $("#quickPress").disabled = !character || character.state === "dead" || state.energy < 1;
   $("#quickBalance").textContent = money(state.shards);
   $("#quickEnergy").textContent = stats.maxEnergy ? `Energy ${fmt(state.energy)} / ${fmt(stats.maxEnergy)}` : "Hatch an Egg";
+  $("#bayLevelMain").textContent = `Level ${state.farmLevel}`;
+  $("#bayYieldMain").textContent = `${fmt(getFarmCps(), 3)} shards/sec`;
+  $("#buyFarmMain").textContent = `Upgrade Bay - ${money(farmCost())}`;
+  $("#buyFarmMain").disabled = state.shards < farmCost();
 }
 
 function renderActiveCharacter() {
   const character = getActiveCharacter();
   if (!character) {
     $("#activeCharacterPanel").innerHTML = `
-      <div class="empty-state">
+      <button class="empty-character-cta" type="button" data-hatch-shortcut>
         <strong>No active Character</strong>
-        <p>Hatch your starter Egg in Characters, then select a living Character for clicking.</p>
-      </div>
+        <span>Hatch your starter Egg to power the button.</span>
+        <em>Hatch Character</em>
+      </button>
     `;
     $("#buildSummary").innerHTML = "";
+    $("#stageCharacterSprite").className = "stage-character-art is-empty";
+    $("#stageCharacterSprite").innerHTML = `
+      <button class="empty-character-portal" type="button" data-hatch-shortcut>
+        <strong>Hatch Character</strong>
+        <span>Open your starter Egg</span>
+      </button>
+    `;
+    $("#mainFightProgress").innerHTML = renderMainFightProgress(null);
+    $("#mainEquippedLoot").innerHTML = renderMainEquippedLoot(null);
+    bindHatchShortcuts();
     return;
   }
-  $("#activeCharacterPanel").innerHTML = renderCharacterMini(character);
-  const loadout = getLoadout(character.loadoutId);
   const classInfo = getClass(character.classId);
   const affinity = getAffinity(character.affinityId);
-  const stats = getCharacterStats(character);
+  const rarity = getRarity(character.rarity);
   const loot = getEquippedLoot(character);
-  $("#buildSummary").innerHTML = [
-    ["Loadout", `${loadout.name}: ${loadout.description}`],
-    ["Class", `${classInfo.name}: ${classInfo.description}`],
-    ["Race", `${affinity.name}: ${affinity.description}`],
-    ["Loot", loot ? `${loot.name}: ${formatLootPrimary(loot)} | ${formatSideStats(loot)} | ${loot.durability}/${loot.maxDurability}` : "No loot equipped"],
-    ["Battle stats", `HP ${fmt(stats.health)} | V ${fmt(stats.violence)} | P ${fmt(stats.power)} | H ${fmt(stats.harmony)}`],
-    ["Bay", `${fmt(getFarmCps(), 3)} shards/sec`],
-  ]
-    .map(([label, value]) => `<div class="summary-row"><span>${label}</span><strong>${value}</strong></div>`)
-    .join("");
+  $("#activeCharacterPanel").style.setProperty("--rarity", rarity.color);
+  $("#activeCharacterPanel").innerHTML = renderCharacterMini(character);
+  $("#stageCharacterSprite").className = "stage-character-art";
+  $("#stageCharacterSprite").style.setProperty("--stage-affinity", affinity.color);
+  $("#stageCharacterSprite").style.setProperty("--rarity", rarity.color);
+  $("#stageCharacterSprite").innerHTML = `<img src="${escapeHtml(getRaceSprite(character.affinityId))}" alt="${escapeHtml(
+    `${affinity.name} ${classInfo.name} ${character.name}`,
+  )}" />`;
+  $("#mainFightProgress").innerHTML = renderMainFightProgress(character);
+  $("#mainEquippedLoot").innerHTML = renderMainEquippedLoot(character);
+  $("#buildSummary").innerHTML = `
+    ${renderRaceProfile(affinity)}
+    ${renderCharacterStatGrid(character)}
+    ${renderCurrentOutput(character)}
+    <div class="formula-list">
+      ${clickerFormulaRows(character)
+        .map(([label, value]) => `<div class="formula-row"><span>${label}</span><strong>${value}</strong></div>`)
+        .join("")}
+    </div>
+    <div class="summary-row"><span>Class</span><strong>${classInfo.name}: ${classInfo.bonus}. ${classInfo.description}</strong></div>
+    <div class="summary-row"><span>Loot</span><strong>${
+      loot ? `${loot.name}: ${formatLootPrimary(loot)} | ${formatSideStats(loot)} | ${loot.durability}/${loot.maxDurability}` : "No loot equipped"
+    }</strong></div>
+    <div class="summary-row"><span>Bay</span><strong>${fmt(getFarmCps(), 3)} shards/sec</strong></div>
+  `;
+}
+
+function bindHatchShortcuts() {
+  $$("[data-hatch-shortcut]").forEach((button) => {
+    button.addEventListener("click", () => {
+      routeTo("characters");
+      window.requestAnimationFrame(() => {
+        $("#openCharacterEgg")?.focus();
+        $("#openCharacterEgg")?.classList.add("is-attention");
+        window.setTimeout(() => $("#openCharacterEgg")?.classList.remove("is-attention"), 1400);
+      });
+    });
+  });
+}
+
+function renderMainFightProgress(character) {
+  const fights = character ? Math.min(character.fightCount, 10) : 0;
+  const nextLabel = character?.marked ? "Marked" : fights >= 10 ? "Tournament ready" : `${fights} / 10 Duels`;
+  return `
+    <div class="stage-status-heading">
+      <span>Battle path</span>
+      <strong>${nextLabel}</strong>
+    </div>
+    <div class="duel-pips" aria-label="${fights} of 10 Duels completed">
+      ${Array.from({ length: 10 }, (_, index) => `<i class="${index < fights ? "is-filled" : ""}"></i>`).join("")}
+      <i class="is-tournament" title="Fight 11: Tournament"></i>
+    </div>
+    <small>${character ? `${character.trainingPoints} TP | Record ${character.duelWins}-${character.duelLosses}` : "Select a Character to battle"}</small>
+  `;
+}
+
+function renderMainEquippedLoot(character) {
+  const loot = getEquippedLoot(character);
+  if (!loot) {
+    return `
+      <div class="stage-status-heading"><span>Equipped loot</span><strong>None</strong></div>
+      <small>Equip one item from Loot.</small>
+    `;
+  }
+  const durabilityPct = loot.maxDurability ? Math.max(0, Math.min(100, (loot.durability / loot.maxDurability) * 100)) : 0;
+  return `
+    <div class="stage-status-heading"><span>Equipped loot</span><strong>${loot.durability}/${loot.maxDurability}</strong></div>
+    <div class="loot-stage-row">
+      ${renderLootVisual(loot, "is-stage")}
+      <div>
+        <strong>${loot.name}</strong>
+        <small>${formatLootPrimary(loot)}</small>
+        <div class="durability-track"><span style="width:${durabilityPct}%"></span></div>
+      </div>
+    </div>
+  `;
 }
 
 function renderSystems() {
@@ -1921,8 +2379,8 @@ function renderSystems() {
   const systems = [
     ["Characters", "Eggs hatch random Characters into your roster.", `${state.characters.length} owned`],
     ["Active clicker", "One living Character powers the visor button.", character ? character.name : "None"],
-    ["Energy", "Energy comes from loadout, class, HP, Harmony, Power, loot, and upgrades.", `${fmt(stats.regen, 2)}/h`],
-    ["Training", "Duels grant TP. Training increases HP, Violence, Power, or Harmony.", `${state.totalTraining} attempts`],
+    ["Energy", "Race supplies the base. Health, Spirit, Arcana, loot, and upgrades add to it.", `${fmt(stats.regen, 2)}/h`],
+    ["Training", "Duels grant TP. Training increases Health, Might, Arcana, or Spirit.", `${state.totalTraining} attempts`],
     ["Arena", "Fights 1-10 are safe Duels. Fight 11 is the tournament.", `${state.totalDuels} duels`],
     ["Mark", "Tournament winners survive and earn a persistent Mark.", `${state.marks.length} marks`],
     ["Bay", "Offline-style yield accrues locally, capped at 8 hours per tick.", `${fmt(getFarmCps(), 3)} cps`],
@@ -1941,10 +2399,50 @@ function renderCharacters() {
   const active = getActiveCharacter();
   $("#rerollActive").disabled = !active || active.state === "dead" || active.marked || state.shards < rerollCost;
   renderCharacterGrid();
+  renderPlayRoster();
+  $$("[data-select-character]").forEach((button) => {
+    button.addEventListener("click", () => selectCharacter(button.dataset.selectCharacter));
+  });
+}
+
+function renderPlayRoster() {
+  const root = $("#playRoster");
+  if (!root) return;
+  if (!state.characters.length) {
+    root.innerHTML = `
+      <a class="roster-empty" href="#characters" data-route-link="characters">
+        Hatch your starter Egg to add the first Character.
+      </a>
+    `;
+    root.querySelector("[data-route-link]")?.addEventListener("click", (event) => {
+      event.preventDefault();
+      routeTo("characters");
+    });
+    return;
+  }
+  root.innerHTML = state.characters
+    .map((character) => {
+      const affinity = getAffinity(character.affinityId);
+      const classInfo = getClass(character.classId);
+      const active = character.id === state.activeCharacterId;
+      return `
+        <button class="roster-slot ${active ? "is-active" : ""} ${character.state === "dead" ? "is-dead" : ""}"
+          type="button" data-select-character="${character.id}" style="--rarity:${getRarity(character.rarity).color}"
+          ${character.state === "dead" ? "disabled" : ""}>
+          <img src="${escapeHtml(getRaceSprite(character.affinityId))}" alt="" loading="lazy" />
+          <span>
+            <strong>${character.name}</strong>
+            <small style="color:${affinity.color}">${affinity.name} ${classInfo.name}</small>
+          </span>
+        </button>
+      `;
+    })
+    .join("");
 }
 
 function renderTraining() {
   const active = getActiveCharacter();
+  $("#statPrimer").innerHTML = renderStatPrimer(active && active.state !== "dead" ? active : null);
   $("#trainingPointPill").textContent = `${active?.trainingPoints || 0} TP`;
   if (!active || active.state === "dead") {
     $("#trainingCharacterPanel").innerHTML = `
@@ -1957,16 +2455,12 @@ function renderTraining() {
     return;
   }
 
-  const stats = getCharacterStats(active);
   $("#trainingCharacterPanel").innerHTML = `
     ${renderCharacterMini(active)}
-    <div class="character-stat-grid">
-      <span>HP <strong>${fmt(stats.health)}</strong></span>
-      <span>V <strong>${fmt(stats.violence)}</strong></span>
-      <span>P <strong>${fmt(stats.power)}</strong></span>
-      <span>H <strong>${fmt(stats.harmony)}</strong></span>
-    </div>
-    <div class="trait-list">
+    ${renderCharacterStatGrid(active)}
+    ${renderStatSourceTable(active)}
+    ${renderCurrentOutput(active)}
+    <div class="record-list">
       <span>TP: ${active.trainingPoints}</span>
       <span>Record: ${active.duelWins}-${active.duelLosses}</span>
       <span>Fight ${active.fightCount}/11</span>
@@ -1980,13 +2474,31 @@ function renderTrainingPanel(character) {
     $("#trainingPanel").innerHTML = `<div class="empty-state"><strong>No living active Character</strong><p>Select a living Character to train.</p></div>`;
     return;
   }
-  $("#trainingPanel").innerHTML = trainingOptions
+  const stats = getCharacterStats(character);
+  $("#trainingPanel").innerHTML = `
+    <div class="training-economy-note">
+      <strong>Training odds</strong>
+      <span>Every attempt costs 1 TP. Light is the best average return. Moderate and Intense are riskier shortcuts that can gain more at once, but average less per TP.</span>
+    </div>
+    ${trainingOptions
     .map(
       (option) => `
       <article class="training-card">
-        <h3>${option.label}</h3>
-        <p>${option.description}</p>
-        <p class="training-detail">Light is guaranteed. Moderate and intense are bigger rolls that still cost TP if they miss.</p>
+        <div class="training-card-head">
+          <div>
+            <span>${option.role}</span>
+            <h3>${option.label}</h3>
+          </div>
+          <strong>${fmt(stats[option.stat])}</strong>
+        </div>
+        <p>${option.plain}</p>
+        <p class="training-light-impact">${option.lightImpact}</p>
+        <details class="training-math">
+          <summary>Show exact math</summary>
+          <p>${option.description}</p>
+          <p class="training-formula">${option.battleFormula}</p>
+        </details>
+        <p class="training-detail">Every attempt costs 1 TP. A failed roll gives zero.</p>
         ${trainingModes
           .map(
             (mode) => `
@@ -1995,14 +2507,15 @@ function renderTrainingPanel(character) {
             }>
               ${mode.label}: +${option[mode.gainKey]} (${Math.round(mode.chance * 100)}%)
             </button>
-            <small>${mode.description}</small>
+            <small>${mode.description} Average gain: ${fmt(option[mode.gainKey] * mode.chance, 2)} ${option.label} per TP.</small>
           `,
           )
           .join("")}
       </article>
     `,
     )
-    .join("");
+    .join("")}
+  `;
   $$("[data-train-stat]").forEach((button) => {
     button.addEventListener("click", () => trainCharacter(button.dataset.trainStat, button.dataset.trainMode));
   });
@@ -2021,59 +2534,55 @@ function renderCharacterGrid() {
     return;
   }
   $("#characterGrid").innerHTML = state.characters.map(renderCharacterCard).join("");
-  $$("[data-select-character]").forEach((button) => {
-    button.addEventListener("click", () => selectCharacter(button.dataset.selectCharacter));
-  });
 }
 
 function renderCharacterCard(character) {
   const active = character.id === state.activeCharacterId;
   const rarity = getRarity(character.rarity);
-  const loadout = getLoadout(character.loadoutId);
-  const stats = getCharacterStats(character);
+  const race = getAffinity(character.affinityId);
+  const classInfo = getClass(character.classId);
   const loot = getEquippedLoot(character);
   return `
-    <article class="character-card ${active ? "is-active" : ""} ${character.state === "dead" ? "is-dead" : ""}">
+    <article class="character-card ${active ? "is-active" : ""} ${character.state === "dead" ? "is-dead" : ""}"
+      style="--rarity:${rarity.color}">
       ${renderCharacterMini(character)}
-      <div class="character-stat-grid">
-        <span>HP <strong>${fmt(stats.health)}</strong></span>
-        <span>V <strong>${fmt(stats.violence)}</strong></span>
-        <span>P <strong>${fmt(stats.power)}</strong></span>
-        <span>H <strong>${fmt(stats.harmony)}</strong></span>
-      </div>
-      <p>${loadout.description}</p>
-      <p class="metric-line">${loadoutMetricLine(loadout)}</p>
-      <div class="trait-list">
-        ${(character.traits || []).map((trait) => `<span>${trait.slot}: ${trait.name}</span>`).join("")}
-      </div>
-      <div class="loot-chip ${loot ? "" : "is-empty"}">
-        <span>Loot</span>
-        <strong>${loot ? loot.name : "None equipped"}</strong>
-        <small>${loot ? `${formatLootPrimary(loot)} | ${formatSideStats(loot)} | ${loot.durability}/${loot.maxDurability}` : "Equip one item from the Loot tab."}</small>
+      ${renderRaceProfile(race)}
+      ${renderClassProfile(classInfo)}
+      ${renderCharacterStatGrid(character)}
+      ${renderCurrentOutput(character)}
+      <div class="loot-chip ${loot ? "has-loot" : "is-empty"}">
+        ${loot ? renderLootVisual(loot, "is-chip") : ""}
+        <div class="loot-chip-content">
+          <span>Loot</span>
+          <strong>${loot ? loot.name : "None equipped"}</strong>
+          <small>${loot ? `${formatLootPrimary(loot)} | ${formatSideStats(loot)} | ${loot.durability}/${loot.maxDurability}` : "Equip one item from the Loot tab."}</small>
+        </div>
       </div>
       <button class="button compact ${active ? "secondary" : "primary"}" type="button" data-select-character="${character.id}" ${
         character.state === "dead" ? "disabled" : ""
       }>
         ${active ? "Active" : "Select"}
       </button>
-      <span class="rarity" style="color:${rarity.color}">${character.rarity}</span>
+      <span class="rarity" style="color:${rarity.color};border-color:${rarity.color}">${character.rarity}</span>
     </article>
   `;
 }
 
 function renderCharacterMini(character) {
-  const loadout = getLoadout(character.loadoutId);
   const classInfo = getClass(character.classId);
   const affinity = getAffinity(character.affinityId);
+  const rarity = getRarity(character.rarity);
+  const lifecycle = character.state === "dead" ? "DEAD | " : character.marked || character.state === "marked" ? "MARKED | " : "";
   return `
     <div class="character-mini">
-      <div class="character-sprite ${character.marked ? "is-marked" : ""}" style="--affinity:${affinity.color}">
+      <div class="character-sprite ${character.marked ? "is-marked" : ""}"
+        style="--affinity:${affinity.color};--rarity:${rarity.color}">
         <img src="${escapeHtml(getRaceSprite(character.affinityId))}" alt="" loading="lazy" />
       </div>
       <div>
         <h3>${character.name}</h3>
-        <p>${loadout.name} | ${classInfo.name} | <span style="color:${affinity.color}">${affinity.name}</span></p>
-        <p>${character.state.toUpperCase()} | Fights ${character.fightCount}/11 | TP ${character.trainingPoints} | ${character.duelWins}-${character.duelLosses}</p>
+        <p><span style="color:${affinity.color}">${affinity.name}</span> ${classInfo.name}</p>
+        <p>${lifecycle}Fights ${character.fightCount}/11 | TP ${character.trainingPoints} | ${character.duelWins}-${character.duelLosses}</p>
       </div>
     </div>
   `;
@@ -2088,16 +2597,18 @@ function openCharacterGuide() {
       <div class="panel-head">
         <div>
           <p class="eyebrow">Character guide</p>
-          <h2>Loadouts, races, and classes</h2>
+          <h2>Stats, races, and classes</h2>
         </div>
         <button class="button compact" type="button" data-close-modal>Close</button>
       </div>
       <p class="body-copy">
-        This mirrors the picker-style reference while preserving our Egg loop. Eggs roll these parts into Characters;
-        your roster selection decides which full combination powers the button.
+        Stats determine the Character's clicker bonuses and battle behavior. Race owns the base button profile and
+        matchup. Class only supplies starting combat stats.
       </p>
-      <h3>Loadouts</h3>
-      <div class="guide-grid">${loadouts.map((item) => renderLoadoutGuideCard(item, active)).join("")}</div>
+      <h3>Stats in plain English</h3>
+      <div class="guide-grid">${trainingOptions.map((item) => renderTrainingGuideCard(item)).join("")}</div>
+      <h3>Combat styles</h3>
+      <div class="combat-style-grid">${combatStyles.map((style) => renderCombatStyleCard(style, "is-guide")).join("")}</div>
       <h3>Races</h3>
       <div class="guide-grid">${affinities.map((item) => renderRaceGuideCard(item, active)).join("")}</div>
       <h3>Classes</h3>
@@ -2120,20 +2631,6 @@ function closeModal() {
   root.innerHTML = "";
 }
 
-function renderLoadoutGuideCard(loadout, active) {
-  const selected = active?.loadoutId === loadout.id;
-  return `
-    <article class="guide-card ${selected ? "selected" : ""}">
-      <div class="guide-icon visor-icon" aria-hidden="true"><span></span></div>
-      <strong>${loadout.name}</strong>
-      <small>${loadout.access} / ${loadoutBestUse(loadout)}</small>
-      <small>${loadoutMetricLine(loadout)}</small>
-      <p>${loadout.description}</p>
-      <button class="button compact ${selected ? "secondary" : "primary"}" type="button" disabled>${selected ? "Active roll" : "Egg roll"}</button>
-    </article>
-  `;
-}
-
 function renderRaceGuideCard(race, active) {
   const selected = Boolean(active && getAffinity(active.affinityId).id === race.id);
   return `
@@ -2143,9 +2640,10 @@ function renderRaceGuideCard(race, active) {
       </div>
       <strong>${race.name}</strong>
       <small>${race.access} / ${race.best}</small>
+      <small>${raceMetricLine(race)}</small>
       <small>${raceMatchupLine(race.id)}</small>
       <p>${race.description}</p>
-      <button class="button compact ${selected ? "secondary" : "primary"}" type="button" disabled>${selected ? "Active race" : "Egg roll"}</button>
+      <button class="button compact ${selected ? "secondary" : "primary"}" type="button" disabled>${selected ? "Active race" : "Random hatch"}</button>
     </article>
   `;
 }
@@ -2157,24 +2655,24 @@ function renderClassGuideCard(classInfo, active) {
       <div class="guide-icon class-icon" aria-hidden="true">${classInfo.name.slice(0, 1)}</div>
       <strong>${classInfo.name}</strong>
       <small>${classInfo.bonus}</small>
-      <small>${classStatLine(classInfo)}</small>
+      <small>Favors ${classInfo.style}</small>
       <p>${classInfo.description}</p>
-      <button class="button compact ${selected ? "secondary" : "primary"}" type="button" disabled>${selected ? "Active class" : "Egg roll"}</button>
+      <button class="button compact ${selected ? "secondary" : "primary"}" type="button" disabled>${selected ? "Active class" : "Random hatch"}</button>
     </article>
   `;
 }
 
-function loadoutBestUse(loadout) {
-  const uses = {
-    "rookie-visor": "starter rhythm",
-    "neon-courier": "balanced all-day play",
-    "cargo-bruiser": "long sessions",
-    "arcade-racketeer": "burst extraction",
-    "glitch-runner": "multiple check-ins",
-    "patch-prophet": "quest efficiency",
-    "wrong-warp-pilot": "aggressive runs",
-  };
-  return uses[loadout.id] || "flexible play";
+function renderTrainingGuideCard(option) {
+  return `
+    <article class="guide-card">
+      <strong>${option.label}</strong>
+      <small>${option.role}</small>
+      <p>${option.plain}</p>
+      <small>${option.lightImpact}</small>
+      <p>${option.caution}</p>
+      <small>Light +${option.safeGain} at 100% | Moderate +${option.modGain} at 45% | Intense +${option.intenseGain} at 15%</small>
+    </article>
+  `;
 }
 
 function raceMatchupLine(id) {
@@ -2188,15 +2686,8 @@ function raceMatchupLine(id) {
   return wins[id] || "neutral matchup";
 }
 
-function classStatLine(classInfo) {
-  const stats = Object.entries(classInfo.statMods || {})
-    .filter(([, value]) => value)
-    .map(([stat, value]) => `+${value} ${labelStat(stat)}`);
-  return stats.length ? stats.join(" / ") : "No flat stat bonus";
-}
-
 function getCharacterLine(character) {
-  return `${getLoadout(character.loadoutId).name} | ${getClass(character.classId).name} | ${getAffinity(character.affinityId).name} | ${character.rarity}`;
+  return `${getAffinity(character.affinityId).name} | ${getClass(character.classId).name} | ${character.rarity}`;
 }
 
 function renderArena() {
@@ -2212,7 +2703,7 @@ function renderArena() {
   $("#markPill").textContent = state.marks.length ? `${state.marks.length} Mark${state.marks.length === 1 ? "" : "s"}` : "No Mark";
   $("#battleRoundPill").textContent = state.battleScene
     ? `${state.battleScene.label} ${Math.min(state.battleScene.index + 1, state.battleScene.events.length)}/${state.battleScene.events.length}`
-    : "Idle";
+    : "No battle";
   $("#markPanel").innerHTML = state.marks.length
     ? state.marks.map((mark) => `<div class="mark-card"><strong>The Mark</strong><p>${mark.characterName} won the tournament.</p></div>`).join("")
     : `<p class="body-copy">No tournament wins yet. Fight 11 is where the Mark is earned.</p>`;
@@ -2250,23 +2741,30 @@ function renderBattleScene(scene) {
   const leftHp = event.leftHp ?? scene.left.hpMax;
   const rightHp = event.rightHp ?? scene.right.hpMax;
   const activeClass = event.final ? "is-final" : event.side === "left" ? "is-attacking-left" : "is-attacking-right";
+  const abilityClass = `ability-${String(event.ability || "strike").toLowerCase()}`;
+  const targetSide = event.side === "left" ? "right" : "left";
   return `
-    <div class="battle-stage ${activeClass}">
-      ${renderBattleFighter(scene.left, leftHp, "left")}
+    <div class="battle-stage ${activeClass} ${abilityClass}">
+      <div class="battle-scanlines" aria-hidden="true"></div>
+      ${renderBattleFighter(scene.left, leftHp, "left", targetSide === "left" && !event.final)}
       <div class="battle-vs">
         <span>${scene.label}</span>
         <strong>VS</strong>
       </div>
-      ${renderBattleFighter(scene.right, rightHp, "right")}
+      <div class="battle-projectile" aria-hidden="true"></div>
+      <div class="battle-impact" aria-hidden="true"></div>
+      ${event.damage && !event.final ? `<strong class="battle-damage ${targetSide}">-${event.damage}</strong>` : ""}
+      ${event.heal && !event.final ? `<strong class="battle-heal ${event.side}">+${event.heal}</strong>` : ""}
+      ${renderBattleFighter(scene.right, rightHp, "right", targetSide === "right" && !event.final)}
     </div>
     <div class="battle-action-text">${escapeHtml(event.text)}</div>
   `;
 }
 
-function renderBattleFighter(actor, hp, side) {
+function renderBattleFighter(actor, hp, side, isHit = false) {
   const hpPct = actor.hpMax ? Math.max(0, Math.min(100, (hp / actor.hpMax) * 100)) : 0;
   return `
-    <div class="battle-fighter ${side}">
+    <div class="battle-fighter ${side} ${isHit ? "is-hit" : ""}">
       <div class="battle-sprite-card" style="--affinity:${actor.affinityColor}">
         <img class="battle-sprite-img" src="${escapeHtml(actor.spriteSrc || raceSprites.normal)}" alt="" loading="lazy" />
       </div>
@@ -2275,7 +2773,7 @@ function renderBattleFighter(actor, hp, side) {
         <p>${actor.affinityName} ${actor.className}</p>
       </div>
       <div class="hp-track"><span style="width:${hpPct}%"></span></div>
-      <small>${fmt(hp)} / ${fmt(actor.hpMax)} HP</small>
+      <small>${fmt(hp)} / ${fmt(actor.hpMax)} Health</small>
     </div>
   `;
 }
@@ -2332,7 +2830,6 @@ function renderChapter(chapter) {
       ${chapter.body.map((text) => `<p>${text}</p>`).join("")}
       ${chapter.kind === "tokenomics" ? renderTokenomics() : ""}
       ${chapter.kind === "contracts" ? renderContracts() : ""}
-      ${chapter.kind === "loadouts" ? renderLoadoutDocs() : ""}
       ${chapter.kind === "classes" ? renderClassDocs() : ""}
       ${chapter.kind === "affinities" ? renderAffinityDocs() : ""}
       ${chapter.kind === "loot" ? renderLootDocs() : ""}
@@ -2363,27 +2860,11 @@ function renderContracts() {
   `;
 }
 
-function renderLoadoutDocs() {
-  return `
-    <div class="breed-grid">
-      ${loadouts
-        .map(
-          (loadout) => `
-          <div class="breed-item">
-            <span>${loadout.access}</span>
-            <strong>${loadout.name}</strong>
-            <p>${loadout.description}</p>
-            <p>${loadoutMetricLine(loadout)}</p>
-          </div>
-        `,
-        )
-        .join("")}
-    </div>
-  `;
-}
-
 function renderClassDocs() {
   return `
+    <h4>Combat styles</h4>
+    <div class="combat-style-grid">${combatStyles.map((style) => renderCombatStyleCard(style, "is-doc")).join("")}</div>
+    <h4>Classes</h4>
     <div class="class-grid">
       ${classes
         .map(
@@ -2391,8 +2872,8 @@ function renderClassDocs() {
           <div class="class-item">
             <span>${item.bonus}</span>
             <strong>${item.name}</strong>
+            <p>Favors ${item.style}</p>
             <p>${item.description}</p>
-            <p>${classStatLine(item)}</p>
           </div>
         `,
         )
@@ -2413,6 +2894,7 @@ function renderAffinityDocs() {
             </div>
             <span style="color:${item.color}">${item.name}</span>
             <strong>${raceMatchupLine(item.id)}</strong>
+            <p>${raceMetricLine(item)}</p>
             <p>${item.description}</p>
           </div>
         `,
@@ -2428,12 +2910,15 @@ function renderLootDocs() {
       ${lootCategories
         .map(
           (item) => `
-          <div class="class-item">
-            <span>${item.name}</span>
-            <strong>${item.label}</strong>
-            <p>${Object.entries(item.ranges)
-              .map(([rarity, range]) => `${rarity}: ${range[0]}-${range[1]}${item.unit}`)
-              .join(" | ")}</p>
+          <div class="class-item loot-doc-item">
+            ${renderLootVisual({ name: item.variants[0].name, image: item.variants[0].image }, "is-doc")}
+            <div>
+              <span>${item.name}</span>
+              <strong>${item.label}</strong>
+              <p>${Object.entries(item.ranges)
+                .map(([rarity, range]) => `${rarity}: ${range[0]}-${range[1]}${item.unit}`)
+                .join(" | ")}</p>
+            </div>
           </div>
         `,
         )
@@ -2462,7 +2947,7 @@ function renderLeaderboard() {
     ...mockPlayers,
     {
       name: "you",
-      character: character ? getLoadout(character.loadoutId).name : "No Character",
+      character: character ? getAffinity(character.affinityId).name : "No Character",
       className: character ? getClass(character.classId).name : "-",
       total: state.totalEarned,
       steal: stats.steal,
@@ -2586,7 +3071,10 @@ function renderInventory() {
       const durabilityPct = Math.round((item.durability / item.maxDurability) * 100);
       return `
         <article class="gear-card ${equipped ? "is-equipped" : ""}">
-          <span class="rarity" style="color:${item.color}">${item.rarity}</span>
+          <div class="gear-card-top">
+            ${renderLootVisual(item, "is-card")}
+            <span class="rarity" style="color:${item.color}">${item.rarity}</span>
+          </div>
           <h3>${item.name}</h3>
           <p>${item.category} | ${formatLootPrimary(item)}</p>
           <p>${formatSideStats(item)}</p>
@@ -2637,7 +3125,10 @@ function renderMarketListing(listing) {
   const item = listing.item;
   return `
     <article class="gear-card">
-      <span class="rarity" style="color:${item.color}">${item.rarity}</span>
+      <div class="gear-card-top">
+        ${renderLootVisual(item, "is-card")}
+        <span class="rarity" style="color:${item.color}">${item.rarity}</span>
+      </div>
       <h3>${item.name}</h3>
       <p>${item.category} | ${formatLootPrimary(item)}</p>
       <p>${formatSideStats(item)}</p>
@@ -2653,7 +3144,10 @@ function renderPlayerListing(listing) {
   const item = listing.item;
   return `
     <article class="gear-card is-equipped">
-      <span class="rarity" style="color:${item.color}">${item.rarity}</span>
+      <div class="gear-card-top">
+        ${renderLootVisual(item, "is-card")}
+        <span class="rarity" style="color:${item.color}">${item.rarity}</span>
+      </div>
       <h3>${item.name}</h3>
       <p>${item.category} | ${formatLootPrimary(item)}</p>
       <p>Listed for ${listing.currency === "eth" ? `${fmt(listing.price, 4)} ETH` : money(listing.price)}</p>
@@ -2691,11 +3185,21 @@ function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[char]);
 }
 
+function renderLootVisual(item, modifier = "") {
+  if (!item?.image) return "";
+  return `
+    <span class="loot-visual ${modifier}" aria-hidden="true">
+      <img src="${escapeHtml(item.image)}" alt="" loading="lazy" />
+    </span>
+  `;
+}
+
 function boot() {
   initNavigation();
   initTheme();
   initControls();
-  routeTo(location.hash.slice(1) || "home");
+  saveState();
+  routeTo(location.hash.slice(1) || "play");
   window.setInterval(render, 5000);
 }
 
