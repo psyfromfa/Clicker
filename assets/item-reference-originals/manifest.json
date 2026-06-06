@@ -1,0 +1,242 @@
+﻿[
+    {
+        "category":  "amulet",
+        "filename":  "amulet-clover-amulet.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/amulet-clover-amulet.png",
+        "bytes":  6292
+    },
+    {
+        "category":  "amulet",
+        "filename":  "amulet-moonroot-talisman.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/amulet-moonroot-talisman.png",
+        "bytes":  5910
+    },
+    {
+        "category":  "amulet",
+        "filename":  "amulet-rainbow-relic.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/amulet-rainbow-relic.png",
+        "bytes":  6890
+    },
+    {
+        "category":  "amulet",
+        "filename":  "amulet-sunstone-pendant.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/amulet-sunstone-pendant.png",
+        "bytes":  5621
+    },
+    {
+        "category":  "amulet",
+        "filename":  "amulet-twine-charm.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/amulet-twine-charm.png",
+        "bytes":  5672
+    },
+    {
+        "category":  "boots",
+        "filename":  "boots-bunny-trail-boots.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/boots-bunny-trail-boots.png",
+        "bytes":  12934
+    },
+    {
+        "category":  "boots",
+        "filename":  "boots-burrow-runner-boots.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/boots-burrow-runner-boots.png",
+        "bytes":  18325
+    },
+    {
+        "category":  "boots",
+        "filename":  "boots-common-sprout-boots.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/boots-common-sprout-boots.png",
+        "bytes":  5390
+    },
+    {
+        "category":  "boots",
+        "filename":  "boots-epic-evergreen-boots.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/boots-epic-evergreen-boots.png",
+        "bytes":  5655
+    },
+    {
+        "category":  "boots",
+        "filename":  "boots-legendary-meadowstrider-boots.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/boots-legendary-meadowstrider-boots.png",
+        "bytes":  6451
+    },
+    {
+        "category":  "boots",
+        "filename":  "boots-lucky-paw-boots.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/boots-lucky-paw-boots.png",
+        "bytes":  27247
+    },
+    {
+        "category":  "boots",
+        "filename":  "boots-moonhop-boots.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/boots-moonhop-boots.png",
+        "bytes":  19359
+    },
+    {
+        "category":  "boots",
+        "filename":  "boots-rare-sunbloom-boots.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/boots-rare-sunbloom-boots.png",
+        "bytes":  5762
+    },
+    {
+        "category":  "boots",
+        "filename":  "boots-thumper-boots.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/boots-thumper-boots.png",
+        "bytes":  15887
+    },
+    {
+        "category":  "boots",
+        "filename":  "boots-uncommon-clover-boots.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/boots-uncommon-clover-boots.png",
+        "bytes":  5925
+    },
+    {
+        "category":  "cape",
+        "filename":  "cape-bunny-burrow-cape.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/cape-bunny-burrow-cape.png",
+        "bytes":  11778
+    },
+    {
+        "category":  "cape",
+        "filename":  "cape-common-tattered-cape.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/cape-common-tattered-cape.png",
+        "bytes":  5332
+    },
+    {
+        "category":  "cape",
+        "filename":  "cape-cottontail-mantle.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/cape-cottontail-mantle.png",
+        "bytes":  20897
+    },
+    {
+        "category":  "cape",
+        "filename":  "cape-epic-vault-robbers-cape.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/cape-epic-vault-robbers-cape.png",
+        "bytes":  5561
+    },
+    {
+        "category":  "cape",
+        "filename":  "cape-hareflare-cape.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/cape-hareflare-cape.png",
+        "bytes":  9521
+    },
+    {
+        "category":  "cape",
+        "filename":  "cape-legendary-bandit-kings-mantle.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/cape-legendary-bandit-kings-mantle.png",
+        "bytes":  6050
+    },
+    {
+        "category":  "cape",
+        "filename":  "cape-moonhop-cape.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/cape-moonhop-cape.png",
+        "bytes":  11396
+    },
+    {
+        "category":  "cape",
+        "filename":  "cape-rare-burglars-cape.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/cape-rare-burglars-cape.png",
+        "bytes":  4925
+    },
+    {
+        "category":  "cape",
+        "filename":  "cape-uncommon-snatchers-cloak.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/cape-uncommon-snatchers-cloak.png",
+        "bytes":  5618
+    },
+    {
+        "category":  "cape",
+        "filename":  "cape-warren-scout-cloak.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/cape-warren-scout-cloak.png",
+        "bytes":  17149
+    },
+    {
+        "category":  "hat",
+        "filename":  "hat-bunny-ear-hood.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/hat-bunny-ear-hood.png",
+        "bytes":  16538
+    },
+    {
+        "category":  "hat",
+        "filename":  "hat-carrot-sprout-bonnet.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/hat-carrot-sprout-bonnet.png",
+        "bytes":  14355
+    },
+    {
+        "category":  "hat",
+        "filename":  "hat-common-pebble-cap.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/hat-common-pebble-cap.png",
+        "bytes":  4021
+    },
+    {
+        "category":  "hat",
+        "filename":  "hat-cottontail-cap.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/hat-cottontail-cap.png",
+        "bytes":  15944
+    },
+    {
+        "category":  "hat",
+        "filename":  "hat-epic-ironroot-crown.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/hat-epic-ironroot-crown.png",
+        "bytes":  5479
+    },
+    {
+        "category":  "hat",
+        "filename":  "hat-legendary-worldcarrot-crown.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/hat-legendary-worldcarrot-crown.png",
+        "bytes":  5674
+    },
+    {
+        "category":  "hat",
+        "filename":  "hat-moonrabbit-helm.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/hat-moonrabbit-helm.png",
+        "bytes":  13163
+    },
+    {
+        "category":  "hat",
+        "filename":  "hat-rare-oakheart-helm.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/hat-rare-oakheart-helm.png",
+        "bytes":  5501
+    },
+    {
+        "category":  "hat",
+        "filename":  "hat-uncommon-acorn-cap.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/hat-uncommon-acorn-cap.png",
+        "bytes":  4971
+    },
+    {
+        "category":  "hat",
+        "filename":  "hat-warren-crown.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/hat-warren-crown.png",
+        "bytes":  19739
+    },
+    {
+        "category":  "ring",
+        "filename":  "ring-carrot-signet.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/ring-carrot-signet.png",
+        "bytes":  4293
+    },
+    {
+        "category":  "ring",
+        "filename":  "ring-clover-loop.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/ring-clover-loop.png",
+        "bytes":  3938
+    },
+    {
+        "category":  "ring",
+        "filename":  "ring-copper-band.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/ring-copper-band.png",
+        "bytes":  3547
+    },
+    {
+        "category":  "ring",
+        "filename":  "ring-moonstone-ring.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/ring-moonstone-ring.png",
+        "bytes":  4206
+    },
+    {
+        "category":  "ring",
+        "filename":  "ring-starforge-ring.png",
+        "source":  "https://bunnybutton2.pages.dev/assets/items/ring-starforge-ring.png",
+        "bytes":  4349
+    }
+]

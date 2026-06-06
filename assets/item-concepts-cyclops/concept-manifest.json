@@ -1,0 +1,47 @@
+{
+  "status": "integrated",
+  "implemented": true,
+  "generationMode": "OpenAI built-in image generation with chroma-key removal",
+  "reviewNotes": [
+    "The approved icons are integrated as transparent 512x512 loot assets.",
+    "The original chroma-key concept sheets are retained beside the transparent sheets.",
+    "arcade-power-cell remains excluded from live rotation because its draft front-panel glyph resembles a familiar retro arcade alien."
+  ],
+  "categories": {
+    "lenses": [
+      "cracked-red-visor-lens.png",
+      "gold-targeting-monocle.png",
+      "portal-prism-lens.png",
+      "obsidian-scope-lens.png",
+      "all-seeing-relic-lens.png"
+    ],
+    "boots": [
+      "arcade-runner-boots.png",
+      "bay-technician-boots.png",
+      "portal-step-greaves.png",
+      "metal-race-combat-boots.png",
+      "tournament-champion-boots.png"
+    ],
+    "cores": [
+      "salvaged-visor-battery.png",
+      "arcade-power-cell.png",
+      "portal-reactor-core.png",
+      "arena-heart-core.png",
+      "singularity-eye-core.png"
+    ],
+    "charms": [
+      "iron-eye-token.png",
+      "red-visor-pendant.png",
+      "portal-shard-charm.png",
+      "tournament-mark-medallion.png",
+      "orbital-eye-charm.png"
+    ],
+    "relics": [
+      "scratched-visor-token.png",
+      "miniature-button-shrine.png",
+      "framed-portal-fragment.png",
+      "tournament-mark-tablet.png",
+      "crown-visor-artifact.png"
+    ]
+  }
+}
