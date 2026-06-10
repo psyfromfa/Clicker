@@ -14,6 +14,7 @@ let musicRetryBound = false;
 let soundEnabled = localStorage.getItem("cyclops-button-sound") !== "off";
 let musicEnabled = localStorage.getItem("cyclops-button-music") !== "off";
 const MUSIC_SRC = "assets/StockTune-Galactic%20Banjo%20Sunset_1781048615.mp3";
+const MIN_MUSIC_VOLUME = 0.04;
 const DEFAULT_MUSIC_VOLUME = 0.08;
 const MAX_MUSIC_VOLUME = 0.45;
 const SFX_VOLUME_MULTIPLIER = 1.65;
@@ -35,7 +36,8 @@ function clamp(value, min, max) {
 function readMusicVolumeSetting() {
   const storedPercent = Number(localStorage.getItem("cyclops-button-music-volume"));
   if (!Number.isFinite(storedPercent)) return DEFAULT_MUSIC_VOLUME;
-  return clamp(storedPercent / 100, 0, MAX_MUSIC_VOLUME);
+  if (storedPercent < MIN_MUSIC_VOLUME * 100) return DEFAULT_MUSIC_VOLUME;
+  return clamp(storedPercent / 100, MIN_MUSIC_VOLUME, MAX_MUSIC_VOLUME);
 }
 
 musicVolume = readMusicVolumeSetting();
@@ -3007,7 +3009,7 @@ function renderMusicVolumeControl() {
 }
 
 function setMusicVolume(value) {
-  const percent = clamp(Number(value) || 0, 0, Math.round(MAX_MUSIC_VOLUME * 100));
+  const percent = clamp(Number(value) || Math.round(DEFAULT_MUSIC_VOLUME * 100), Math.round(MIN_MUSIC_VOLUME * 100), Math.round(MAX_MUSIC_VOLUME * 100));
   musicVolume = percent / 100;
   localStorage.setItem("cyclops-button-music-volume", String(percent));
   if (musicTrack) musicTrack.volume = musicVolume;
