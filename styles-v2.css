@@ -50,53 +50,68 @@ body {
   pointer-events: none;
 }
 
-.cargo-crate {
-  width: min(300px, 72vw);
-  aspect-ratio: 1.22;
+.button-core .visor-button.cargo-crate {
+  position: relative;
+  width: min(34vw, 430px);
+  min-width: 280px;
+  aspect-ratio: 1.42;
   height: auto;
-  border: 8px solid #3b2315;
-  border-radius: 4px;
-  background:
-    linear-gradient(90deg, transparent 44%, rgba(48, 25, 12, 0.65) 44% 56%, transparent 56%),
-    repeating-linear-gradient(0deg, #8f542b 0 34px, #6d3d21 34px 39px);
-  box-shadow:
-    0 0 0 4px #1a110c,
-    12px 14px 0 #000,
-    inset 0 0 32px rgba(0, 0, 0, 0.55);
-  transform: perspective(600px) rotateX(3deg);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  transform: perspective(700px) rotateX(2deg);
   isolation: isolate;
+  overflow: visible;
 }
 
-.cargo-crate::before,
-.cargo-crate::after {
-  content: "";
+.button-core .visor-button.cargo-crate::before,
+.button-core .visor-button.cargo-crate::after {
   position: absolute;
-  z-index: 1;
-  background: #4f2c18;
-  border: 2px solid #26170e;
+  content: "";
   pointer-events: none;
 }
 
-.cargo-crate::before {
-  width: 22px;
-  inset: 0 auto 0 18px;
+.button-core .visor-button.cargo-crate::before {
+  z-index: 0;
+  inset: 5% -8% 8%;
+  border-radius: 38% 48% 42% 52%;
+  background:
+    radial-gradient(circle at 50% 54%, rgba(246, 202, 77, 0.22), transparent 34%),
+    radial-gradient(circle at 50% 58%, rgba(85, 239, 133, 0.2), transparent 62%);
+  filter: blur(14px);
+  opacity: 0.82;
+  animation: crate-aura 2.8s ease-in-out infinite;
 }
 
-.cargo-crate::after {
-  width: 22px;
-  inset: 0 18px 0 auto;
+.button-core .visor-button.cargo-crate::after {
+  z-index: 1;
+  right: 9%;
+  bottom: -2%;
+  left: 7%;
+  height: 30px;
+  border: 2px solid rgba(103, 221, 145, 0.78);
+  border-radius: 50%;
+  background: rgba(103, 221, 145, 0.14);
+  box-shadow:
+    0 0 22px rgba(103, 221, 145, 0.55),
+    0 0 42px rgba(246, 202, 77, 0.22);
+  transform: perspective(170px) rotateX(64deg);
+  animation: platform-glow 2.6s ease-in-out infinite;
 }
 
-.cargo-crate strong {
-  position: relative;
-  z-index: 4;
-  color: #111;
-  padding: 8px 18px;
-  border: 3px solid #19120c;
-  background: var(--space-bucks);
-  box-shadow: 4px 4px 0 #160f08;
-  font-size: clamp(17px, 2vw, 25px);
-  letter-spacing: 0;
+.cargo-crate-art {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: auto;
+  filter:
+    drop-shadow(10px 12px 0 rgba(0, 0, 0, 0.68))
+    drop-shadow(0 0 16px rgba(103, 221, 145, 0.18));
+  pointer-events: none;
 }
 
 .crate-plank {
@@ -130,17 +145,37 @@ body {
   box-shadow: inset 0 0 0 3px #6f5414;
 }
 
-.cargo-crate:hover:not(:disabled) {
-  transform: perspective(600px) rotateX(1deg) translateY(-3px);
+.button-core .visor-button.cargo-crate:hover:not(:disabled) {
+  transform: perspective(700px) rotateX(1deg) translateY(-4px);
   filter: brightness(1.08);
 }
 
-.cargo-crate.is-pressed {
-  transform: perspective(600px) rotateX(5deg) translateY(7px) scale(0.985);
+.button-core .visor-button.cargo-crate.is-pressed {
+  transform: perspective(700px) rotateX(5deg) translateY(8px) scale(0.985);
 }
 
-.cargo-crate:disabled {
+.button-core .visor-button.cargo-crate:disabled {
   filter: grayscale(0.75) brightness(0.5);
+}
+
+.is-onboarding .button-core .visor-button.cargo-crate.tutorial-spotlight {
+  outline: 0;
+  box-shadow: none !important;
+}
+
+.is-onboarding .button-core .visor-button.cargo-crate.tutorial-spotlight::before {
+  opacity: 1;
+  background:
+    radial-gradient(circle at 50% 54%, rgba(246, 202, 77, 0.34), transparent 36%),
+    radial-gradient(circle at 50% 58%, rgba(85, 239, 133, 0.34), transparent 64%);
+  filter: blur(18px);
+}
+
+.is-onboarding .button-core .visor-button.cargo-crate.tutorial-spotlight::after {
+  border-color: rgba(246, 202, 77, 0.92);
+  box-shadow:
+    0 0 28px rgba(246, 202, 77, 0.68),
+    0 0 52px rgba(85, 239, 133, 0.36);
 }
 
 .ship-energy-meter {
@@ -149,6 +184,68 @@ body {
 
 .ship-energy-meter span {
   background: linear-gradient(90deg, #65d989, var(--space-bucks));
+}
+
+.press-pickup {
+  position: absolute;
+  z-index: 34;
+  top: var(--y, 20%);
+  left: var(--x, 50%);
+  width: 62px;
+  height: 62px;
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(4px 5px 0 #000);
+  animation: pickup-burst 900ms cubic-bezier(0.14, 0.78, 0.22, 1) forwards;
+  animation-delay: var(--delay, 0ms);
+  transform: translate(-50%, -50%) scale(0.2) rotate(0deg);
+}
+
+.press-pickup.is-bucks {
+  width: 54px;
+  height: 54px;
+}
+
+.press-pickup.is-salvage {
+  width: 82px;
+  height: 82px;
+  animation-duration: 1200ms;
+  filter: drop-shadow(4px 5px 0 #000) drop-shadow(0 0 14px rgba(114, 231, 160, 0.75));
+}
+
+.is-onboarding .button-core .press-effects {
+  z-index: 130;
+}
+
+@keyframes pickup-burst {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.12) rotate(0deg);
+  }
+  14% {
+    opacity: 1;
+    transform: translate(calc(-50% + var(--pop-x, 0px)), calc(-50% + var(--pop-y, -12px))) scale(0.68) rotate(calc(var(--rot, 0deg) * 0.18));
+  }
+  72% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--dx, 0px)), calc(-50% + var(--dy, -110px))) scale(1.02) rotate(var(--rot, 0deg));
+  }
+}
+
+@keyframes crate-aura {
+  0%,
+  100% {
+    opacity: 0.68;
+    transform: scale(0.98);
+  }
+
+  50% {
+    opacity: 0.94;
+    transform: scale(1.04);
+  }
 }
 
 .empty-character-callout {
@@ -1487,6 +1584,24 @@ body {
   line-height: 1;
 }
 
+.battle-name-row span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.battle-advantage-tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 18px;
+  padding: 1px 5px;
+  border: 1px solid #a77200;
+  background: #2a2108;
+  color: #a77200;
+  font-size: 10px;
+  line-height: 1;
+}
+
 .battle-fighter .battle-hp {
   width: 100%;
   height: 12px;
@@ -1548,32 +1663,19 @@ body {
   animation-name: fighter-hit;
 }
 
-.battle-critical-banner,
-.battle-advantage-banner {
+.battle-critical-banner {
   position: absolute;
   z-index: 24;
   left: 50%;
+  top: 16px;
   padding: 7px 12px;
   border: 2px solid currentColor;
   background: #08090a;
+  color: #ff626c;
   box-shadow: 4px 4px 0 #000;
   transform: translateX(-50%);
   pointer-events: none;
-}
-
-.battle-critical-banner {
-  top: 16px;
-  color: #ff626c;
   animation: battle-banner-pop 900ms steps(4, end);
-}
-
-.battle-advantage-banner {
-  top: 16px;
-  right: 16px;
-  left: auto;
-  color: var(--space-bucks);
-  animation: battle-banner-pop-corner 900ms steps(4, end);
-  transform: none;
 }
 
 .battle-heal-aura {
@@ -1631,19 +1733,6 @@ body {
   75% {
     opacity: 1;
     transform: translate(-50%, 0) scale(1);
-  }
-}
-
-@keyframes battle-banner-pop-corner {
-  0%,
-  100% {
-    opacity: 0;
-    transform: translateY(-10px) scale(0.8);
-  }
-  20%,
-  75% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
   }
 }
 
