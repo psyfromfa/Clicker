@@ -624,7 +624,7 @@ function tutorialMessage() {
     ["The Shop terminal just came online.", "Buy the one-time Starter Crate for 20 Space Bucks."],
     ["Every recruit can equip one item.", "Equip the new item from the Gear screen."],
     ["Broken equipment still has value.", "Dismantle the damaged tutorial item to recover Salvage."],
-    ["The Arena terminal is receiving challengers.", "Complete one battle to earn a Training Point."],
+    ["The Arena terminal is receiving challengers.", "Read the Combat Rules, then complete one battle to earn a Training Point."],
     ["Training converts battle experience into permanent stats.", "Spend 1 TP using Light, Moderate, or Intense training."],
     ["Crew Bay upgrade available.", "Open Shop and upgrade the Crew Bay to Level 2."],
     ["There is room for another bunk.", "Open Crew and hire your second recruit."],
@@ -659,7 +659,7 @@ function pressCargo() {
     }
     saveState();
     renderAll();
-    animatePress(1, false, false);
+    animatePress(1, false, false, false);
     playSfx(finalPress ? "unlock" : "press");
     if (finalPress) showToast("Crew hiring unlocked.");
     return;
@@ -705,7 +705,7 @@ function pressCargo() {
 
   saveState();
   renderAll();
-  animatePress(gain, critical, preserved);
+  animatePress(gain, critical, preserved, salvageFound);
   playSfx(critical ? "lucky" : "press");
 }
 
@@ -1061,6 +1061,20 @@ function baseCastDamage(attackerStats, defenderStats) {
   return Math.max(1, 8 + attackerStats.sorcery * 1.2 - defenderStats.spirit * 0.3);
 }
 
+function battleActionLabel(action) {
+  if (action === "strike") return "Strength attack";
+  if (action === "cast") return "Sorcery attack";
+  if (action === "recover") return "Spirit recover";
+  return action || "Action";
+}
+
+function battleActionShort(action) {
+  if (action === "strike") return "STRENGTH";
+  if (action === "cast") return "SORCERY";
+  if (action === "recover") return "SPIRIT";
+  return action ? action.toUpperCase() : "";
+}
+
 function createOpponent(character, scale = 1, seed = Date.now()) {
   const random = seededRandom(`${character.id}-${seed}-${scale}`);
   const opponent = createCharacter({
@@ -1128,7 +1142,7 @@ function resolveBattle(left, right, options = {}) {
         healing,
         leftHp,
         rightHp,
-        text: `${attacker.name} recovered ${healing} HP.`,
+        text: `${attacker.name} used Spirit recover for ${healing} HP.`,
       });
       continue;
     }
@@ -1153,7 +1167,7 @@ function resolveBattle(left, right, options = {}) {
       advantage: advantage > 1,
       leftHp,
       rightHp,
-      text: `${attacker.name} used ${action === "strike" ? "Strike" : "Cast"} for ${damage} damage${critical ? " (CRITICAL)" : ""}${advantage > 1 ? " (ADVANTAGE)" : ""}.`,
+      text: `${attacker.name} used ${battleActionLabel(action)} for ${damage} damage${critical ? " (CRITICAL)" : ""}${advantage > 1 ? " (ADVANTAGE)" : ""}.`,
     });
   }
 
@@ -1533,12 +1547,9 @@ function buildShell() {
           <div class="stage-character-art" id="stageCharacterSprite"></div>
           <div class="stage-character-panel" id="activeCharacterPanel"></div>
         </div>
-        <div class="button-core">
+          <div class="button-core">
           <button class="visor-button cargo-crate" id="pressButton" type="button" data-action="press" aria-label="Open captured cargo">
-            <span class="crate-plank plank-one" aria-hidden="true"></span>
-            <span class="crate-plank plank-two" aria-hidden="true"></span>
-            <span class="crate-lock" aria-hidden="true"></span>
-            <strong>OPEN</strong>
+            <img class="cargo-crate-art" src="assets/game-ui/cargo-crate.png" alt="" />
           </button>
           <div class="energy-meter ship-energy-meter" aria-label="Total Energy"><span id="energyBar"></span></div>
           <div class="station-meta">
@@ -1968,10 +1979,11 @@ function renderVoyageChecklist() {
 
 function combatFormulaRows(stats) {
   return [
-    ["Max HP", `${50 + stats.health * 5}`, "50 + Health x 5", "health"],
-    ["Strike", `${fmt(baseStrikeDamage(stats, { health: 10 }), 1)} vs average`, "8 + Strength x 1.2 - defender Health x 0.3", "strength"],
-    ["Cast", `${fmt(baseCastDamage(stats, { spirit: 10 }), 1)} vs average`, "8 + Sorcery x 1.2 - defender Spirit x 0.3", "sorcery"],
-    ["Critical", `${fmt(combatCriticalChance(stats) * 100, 1)}%`, "5% + Dexterity above 10 x 0.5%", "dexterity"],
+    ["Health", `${50 + stats.health * 5} max HP`, "50 + Health x 5", "health"],
+    ["Strength", `${fmt(baseStrikeDamage(stats, { health: 10 }), 1)} vs average`, "8 + Strength x 1.2 - defender Health x 0.3", "strength"],
+    ["Sorcery", `${fmt(baseCastDamage(stats, { spirit: 10 }), 1)} vs average`, "8 + Sorcery x 1.2 - defender Spirit x 0.3", "sorcery"],
+    ["Spirit", `${5 + stats.spirit} HP heal`, "Once under 35% HP: 5 + Spirit", "spirit"],
+    ["Dexterity", `${fmt(combatCriticalChance(stats) * 100, 1)}% crit`, "5% + Dexterity above 10 x 0.5%", "dexterity"],
   ];
 }
 
@@ -2387,14 +2399,16 @@ function renderCombatLegend() {
     .map((id) => getRace(id).name)
     .join(" > ");
   root.innerHTML = `
-    <div class="panel-head"><div><p class="eyebrow">Combat rules</p><h3>Readable fight math</h3></div><span class="pill">Auto</span></div>
+    <div class="panel-head"><div><p class="eyebrow">Combat rules</p><h3>Stat-based auto battle</h3></div><span class="pill">Auto</span></div>
     <div class="advantage-wheel"><small>Advantage chain</small><strong>${wheel}</strong></div>
     <div class="combat-legend-list">
-      <span><strong>Strike</strong><small>Physical hit. Strength raises it, defender Health reduces it.</small></span>
-      <span><strong>Cast</strong><small>Spell hit. Sorcery raises it, defender Spirit reduces it.</small></span>
-      <span><strong>Recover</strong><small>Once under 35% HP, Spirit heals 5 + Spirit HP.</small></span>
-      <span><strong>Dexterity</strong><small>Higher Dexterity usually moves first and crits more often.</small></span>
-      <span><strong>Advantage</strong><small>The advantaged recruit deals 1.10x damage, not an automatic win.</small></span>
+      <span><strong>Turn choice</strong><small>Each turn uses the stronger attack, unless Spirit recovery triggers.</small></span>
+      <span><strong>Health</strong><small>Max HP = 50 + Health x 5. Health also reduces incoming Strength damage by Health x 0.3.</small></span>
+      <span><strong>Strength</strong><small>Strength attack = 8 + Strength x 1.2 - defender Health x 0.3.</small></span>
+      <span><strong>Sorcery</strong><small>Sorcery attack = 8 + Sorcery x 1.2 - defender Spirit x 0.3.</small></span>
+      <span><strong>Spirit</strong><small>Once under 35% HP, recover 5 + Spirit HP. Spirit also reduces incoming Sorcery damage.</small></span>
+      <span><strong>Dexterity</strong><small>Higher Dexterity goes first. Crit = 5% + 0.5% per Dexterity above 10, capped at 35%.</small></span>
+      <span><strong>Advantage</strong><small>When your race beats theirs, your attacks deal 1.10x damage.</small></span>
     </div>`;
 }
 
@@ -2524,12 +2538,11 @@ function renderBattleStage() {
       ${event.action && !event.final && event.action !== "recover" ? `<div class="battle-projectile" aria-hidden="true"></div><div class="battle-impact" aria-hidden="true"></div>` : ""}
       ${event.action === "recover" ? `<div class="battle-heal-aura ${event.side}" aria-hidden="true"></div>` : ""}
       ${event.critical ? `<div class="battle-critical-banner" aria-hidden="true">CRITICAL</div>` : ""}
-      ${event.advantage ? `<div class="battle-advantage-banner" aria-hidden="true">ADVANTAGE</div>` : ""}
-      ${renderBattleHud(scene.right, event.rightHp, "enemy")}
-      ${renderBattleHud(scene.left, event.leftHp, "player")}
+      ${renderBattleHud(scene.right, event.rightHp, "enemy", event.advantage && event.side === "right")}
+      ${renderBattleHud(scene.left, event.leftHp, "player", event.advantage && event.side === "left")}
       ${renderBattleFighter(scene.left, "left", event.side === "right" && !event.final)}
       <div class="battle-center-feed">
-        <strong>${event.action ? event.action.toUpperCase() : scene.running ? "READY" : "RESULT"}</strong>
+        <strong>${event.action ? battleActionShort(event.action) : scene.running ? "READY" : "RESULT"}</strong>
         <p>${escapeHtml(event.text)}</p>
         ${event.damage ? `<span class="damage-callout">-${event.damage}</span>` : ""}
         ${event.healing ? `<span class="heal-callout">+${event.healing}</span>` : ""}
@@ -2545,11 +2558,11 @@ function renderBattleFighter(actor, side, hit) {
     </div>`;
 }
 
-function renderBattleHud(actor, hp, side) {
+function renderBattleHud(actor, hp, side, advantage = false) {
   const percent = clamp((hp / actor.hpMax) * 100, 0, 100);
   return `
     <div class="battle-info-card battle-hud ${side}">
-      <div class="battle-name-row"><strong>${escapeHtml(actor.name)}</strong><span>Lv.${Math.max(1, Math.round(actor.hpMax / 5))}</span></div>
+      <div class="battle-name-row"><strong>${escapeHtml(actor.name)}</strong><span>${advantage ? `<b class="battle-advantage-tag">ADV</b>` : ""}Lv.${Math.max(1, Math.round(actor.hpMax / 5))}</span></div>
       <small>${actor.race} ${actor.className}</small>
       <div class="battle-hp-line"><b>HP</b><div class="battle-hp" aria-label="${actor.name} HP"><span style="width:${percent}%"></span></div></div>
       <small class="battle-hp-text">${fmt(hp)} / ${actor.hpMax} HP</small>
@@ -2692,12 +2705,12 @@ Critical payout = 2x and a 50% chance for 1 Salvage</pre>
     <article class="rules-section">
       <p class="eyebrow">Combat</p><h3>Universal actions</h3>
       <pre>Maximum HP = 50 + Health x 5
-Strike = 8 + Strength x 1.2 - defender Health x 0.3
-Cast = 8 + Sorcery x 1.2 - defender Spirit x 0.3
-Recover = 5 + Spirit, once below 35% HP
+Strength attack = 8 + Strength x 1.2 - defender Health x 0.3
+Sorcery attack = 8 + Sorcery x 1.2 - defender Spirit x 0.3
+Spirit recover = 5 + Spirit, once below 35% HP
 Critical damage = 1.5x
 Advantage = 1.10x damage</pre>
-      <p>The engine chooses Strike or Cast by comparing their expected damage. Dexterity determines initiative. Every action and modifier appears in the battle feed.</p>
+      <p>The engine chooses Strength or Sorcery by comparing their expected damage. Dexterity determines initiative. Every action and modifier appears in the battle feed.</p>
     </article>
     <article class="rules-section">
       <p class="eyebrow">Training</p><h3>Equal average, different risk</h3>
@@ -2781,7 +2794,7 @@ function renderAll() {
   renderTutorial();
 }
 
-function animatePress(gain, critical, preserved) {
+function animatePress(gain, critical, preserved, salvageFound = false) {
   const button = $("#pressButton");
   const effects = $("#pressEffects");
   if (!button || !effects) return;
@@ -2794,6 +2807,39 @@ function animatePress(gain, critical, preserved) {
   float.textContent = `+${fmt(gain, 2)}${critical ? " CRIT" : ""}${preserved ? " FREE" : ""}`;
   effects.appendChild(float);
   setTimeout(() => float.remove(), 1000);
+  const burstCount = critical ? 6 : 3;
+  for (let index = 0; index < burstCount; index += 1) {
+    const pickup = document.createElement("img");
+    const side = index % 3 === 0 ? "left" : index % 3 === 1 ? "right" : "top";
+    const startX = side === "left" ? 23 + Math.random() * 10 : side === "right" ? 69 + Math.random() * 10 : 42 + Math.random() * 16;
+    const startY = side === "top" ? 16 + Math.random() * 7 : 30 + Math.random() * 18;
+    const travelX = side === "left" ? -86 - Math.random() * 52 : side === "right" ? 86 + Math.random() * 52 : -62 + Math.random() * 124;
+    pickup.className = "press-pickup is-bucks";
+    pickup.src = "assets/game-ui/space-bucks.png";
+    pickup.alt = "";
+    pickup.style.setProperty("--x", `${Math.round(startX)}%`);
+    pickup.style.setProperty("--y", `${Math.round(startY)}%`);
+    pickup.style.setProperty("--dx", `${Math.round(travelX)}px`);
+    pickup.style.setProperty("--dy", `${Math.round(-82 - Math.random() * 78)}px`);
+    pickup.style.setProperty("--rot", `${Math.round(-45 + Math.random() * 90)}deg`);
+    pickup.style.setProperty("--delay", `${Math.round(index * 24 + Math.random() * 28)}ms`);
+    effects.appendChild(pickup);
+    setTimeout(() => pickup.remove(), 1150);
+  }
+  if (salvageFound) {
+    const salvage = document.createElement("img");
+    salvage.className = "press-pickup is-salvage";
+    salvage.src = "assets/game-ui/salvage.png";
+    salvage.alt = "";
+    salvage.style.setProperty("--x", `${Math.round(84 + Math.random() * 8)}%`);
+    salvage.style.setProperty("--y", `${Math.round(22 + Math.random() * 18)}%`);
+    salvage.style.setProperty("--dx", `${Math.round(175 + Math.random() * 110)}px`);
+    salvage.style.setProperty("--dy", `${Math.round(-185 - Math.random() * 120)}px`);
+    salvage.style.setProperty("--rot", `${Math.round(-25 + Math.random() * 50)}deg`);
+    salvage.style.setProperty("--delay", "60ms");
+    effects.appendChild(salvage);
+    setTimeout(() => salvage.remove(), 1300);
+  }
 }
 
 function getAudioContext() {

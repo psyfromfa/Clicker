@@ -31,7 +31,7 @@ window.CYCLOPS_BALANCE = {
       id: "strength",
       name: "Strength",
       short: "STR",
-      battle: "Raises Strike damage.",
+      battle: "Raises Strength attack damage.",
       crate: "Adds 0.02 Space Bucks per press above 10.",
     },
     {
@@ -52,7 +52,7 @@ window.CYCLOPS_BALANCE = {
       id: "sorcery",
       name: "Sorcery",
       short: "SOR",
-      battle: "Raises Cast damage.",
+      battle: "Raises Sorcery attack damage.",
       crate: "Adds 0.02 Space Bucks per press above 10.",
     },
   ],
@@ -108,13 +108,13 @@ window.CYCLOPS_BALANCE = {
       id: "mage",
       name: "Mage",
       bonuses: { health: 0, strength: 0, dexterity: 0, spirit: 1, sorcery: 2 },
-      profile: "A magical attacker that favors Cast damage and magical pressure.",
+      profile: "A magical attacker that favors Sorcery damage and magical pressure.",
     },
     {
       id: "warrior",
       name: "Warrior",
       bonuses: { health: 1, strength: 2, dexterity: 0, spirit: 0, sorcery: 0 },
-      profile: "A direct physical attacker with stronger Strikes and solid endurance.",
+      profile: "A direct physical attacker with stronger Strength damage and solid endurance.",
     },
     {
       id: "knight",
